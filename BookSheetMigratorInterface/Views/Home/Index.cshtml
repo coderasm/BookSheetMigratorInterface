@@ -1,0 +1,84 @@
+﻿@section scripts {
+    @Scripts.Render("~/bundles/app")
+}
+
+<div class="page-header">
+    <h1>BookSheet Transaction Migration Service</h1>
+</div>
+<div class=".container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default" data-bind="foreach: transactions">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Transaction <span data-bind="text: transactionId"></span>in event <span data-bind="text: eventId"></span></h2>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-1">SellerID</div>
+                        <div class="col-md-1">BuyerID</div>
+                        <div class="col-md-1">BuyerContactID</div>
+                        <div class="col-md-1">Year</div>
+                        <div class="col-md-1">Make</div>
+                        <div class="col-md-3">Model</div>
+                        <div class="col-md-1">Bid Amount</div>
+                        <div class="col-md-1">Transport Fee</div>
+                        <div class="col-md-1">VIN</div>
+                        <div class="col-md-1">soldDate</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">
+                            <select data-bind="foreach: sellers">
+                                <option data-bind="text: CompanyName, value: Id, changed"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <select data-bind="foreach: buyers">
+                                <option data-bind="text: CompanyName, value: Id"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <select data-bind="foreach: buyerContacts">
+                                <option data-bind="text: CompanyName, value: Id"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <input data-bind="text: year" />
+                        </div>
+                        <div class="col-md-1">
+                            <input data-bind="text: make" />
+                        </div>
+                        <div class="col-md-4">
+                            <input data-bind="text: model" />
+                        </div>
+                        <div class="col-md-1" >
+                            <input data-bind="text: bidAmount"/>
+                        </div>
+                        <div class="col-md-1">
+                            <input data-bind="text: transportFee" />
+                        </div>
+                        <div class="col-md-1">
+                            <input data-bind="text: vin" />
+                        </div>
+                        <div class="col-md-1">
+                            <input data-bind="text: soldDate" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <button data-bind="click: import, enable: importable">Import</button>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Seller Information</h2>
+                        </div>
+                        <div class="panel-body">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-danger" data-bind="visible: error"><p data-bind="text: error"></p></div>
+            </div>
+        </div>
+    </div>
+</div>
