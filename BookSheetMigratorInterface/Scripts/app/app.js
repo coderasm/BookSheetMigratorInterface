@@ -87,8 +87,8 @@ function Transaction(data, transactionUri) {
             && self.bidAmount() > 1000 && self.transportFee();
     });
 
-    self.import = function() {
-        var data = {
+    self.importSale = function() {
+        var postData = {
             transactions: [
                 {
                     eventId: self.eventId,
@@ -99,7 +99,7 @@ function Transaction(data, transactionUri) {
         $.ajax({
             url: self.transactionUri + "import/",
             type: "POST",
-            data: data,
+            data: postData,
             contentType: 'application/json'
         });
     }

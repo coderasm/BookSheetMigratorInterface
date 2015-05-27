@@ -27,18 +27,18 @@
                     </div>
                     <div class="row">
                         <div class="col-md-1">
-                            <select data-bind="foreach: sellers">
-                                <option data-bind="text: CompanyName, value: Id, changed"></option>
+                            <select data-bind="foreach: sellers, value: sellerDealerId">
+                                <option data-bind="text: companyName, value: dealerId"></option>
                             </select>
                         </div>
                         <div class="col-md-1">
-                            <select data-bind="foreach: buyers">
-                                <option data-bind="text: CompanyName, value: Id"></option>
+                            <select data-bind="foreach: buyers, value: buyerDealerId">
+                                <option data-bind="text: companyName, value: dealerId"></option>
                             </select>
                         </div>
                         <div class="col-md-1">
-                            <select data-bind="foreach: buyerContacts">
-                                <option data-bind="text: CompanyName, value: Id"></option>
+                            <select data-bind="foreach: buyerContacts, value: buyerContactId">
+                                <option data-bind="text: name, value: contactId"></option>
                             </select>
                         </div>
                         <div class="col-md-1">
@@ -65,7 +65,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-2">
-                            <button data-bind="click: import, enable: importable">Import</button>
+                            <button data-bind="click: importSale, enable: importable">Import</button>
                         </div>
                     </div>
                     <div class="panel panel-default">
