@@ -60,34 +60,18 @@ function Transaction(data, transactionUri) {
     self.make = data.make;
     self.model = data.model;
     self.vin = data.vin;
-    self.vehicleyear = data.vehicleyear;
+    self.year = data.year;
     self.sellers = ko.observableArray(data.sellers);
     self.buyers = ko.observableArray(data.buyers);
-    self.buyerContacts = ko.observable();
-    self.buyersContacts = ko.observableArray(data.buyerContacts);
+    self.buyerContacts = ko.observable(data.buyerContacts);
+    self.firstTimeLoading = true;
 
-    self.update = ko.pauseableComputed(function() {
-        $.ajax({
-            url: self.transactionUri,
-            type: 'PUT',
-            data: {
-                eventId: self.eventId,
-                transactionId: self.transactionId,
-                bidAmount: self.bidAmount(),
-                soldDate: self.soldDate(),
-                sellerDealerId: self.sellerDealerId(),
-                buyerDealerId: self.buyerDealerId(),
-                buyerContactId: self.buyerContactId
-            }
-        });
-    });
-
-    self.importable = ko.computed(function() {
+    self.importable = ko.computed(function () {
         return self.sellerDealerId() != "" && self.buyerDealerId() != "" && self.buyerContactId() != ""
             && self.bidAmount() > 1000 && self.transportFee();
     });
 
-    self.importSale = function() {
+    self.importSale = function () {
         var postData = {
             transactions: [
                 {
@@ -97,7 +81,7 @@ function Transaction(data, transactionUri) {
             ]
         }
         $.ajax({
-            url: self.transactionUri + "import/",
+            url: self.transactionUri + "import",
             type: "POST",
             data: postData,
             contentType: 'application/json'
@@ -116,7 +100,7 @@ var transactionViewModel = function () {
         self.error('');
         return $.ajax({
             type: method,
-            url: transactionUri,
+            url: uri,
             dataType: 'json',
             contentType: 'application/json',
             data: data ? JSON.stringify(data) : null
@@ -125,22 +109,59 @@ var transactionViewModel = function () {
         });
     }
 
-    self.importAll = function() {
-        ko.utils.arrayForEach(self.transactions, function(transaction) {
+    self.importAll = function () {
+        ko.utils.arrayForEach(self.transactions, function (transaction) {
             if (transaction.importable())
                 transaction.import();
         });
     }
 
-    self.pullNewAndUpdateExistingTransactions = function() {
-        
+    self.pauseAllUpdateListeners = function () {
+        ko.utils.arrayForEach(self.transactions, function (transaction) {
+            transaction.update.pause();
+        });
+    }
+
+    self.resumeAllUpdateListeners = function () {
+        ko.utils.arrayForEach(self.transactions, function (transaction) {
+            transaction.update.resume();
+        });
+    }
+
+    self.pullNewAndUpdateExistingTransactions = function () {
+
     }
 
     function getAllTransactions() {
-        ajaxHelper(transactionUri, 'GET', {imported: false}).done(function (data) {
-            var mappedTransactions = $.map(data, function (item) { return new Transaction(item, transactionUri); });
+        ajaxHelper(transactionUri + "unimported", 'GET').done(function (data) {
+            var mappedTransactions = $.map(data, function(item) {
+                var transaction = new Transaction(item, transactionUri);
+                self.attachUpdater(transaction);
+                return transaction;
+            });
             self.transactions(mappedTransactions);
         });
+    }
+
+    self.attachUpdater = function (transaction) {
+        transaction.update = ko.pauseableComputed(function () {
+            if (!transaction.firstTimeLoading) {
+                $.ajax({
+                    url: transaction.transactionUri + "update",
+                    type: 'PUT',
+                    data: {
+                        eventId: transaction.eventId,
+                        transactionId: transaction.transactionId,
+                        bidAmount: transaction.bidAmount(),
+                        soldDate: transaction.soldDate(),
+                        sellerDealerId: transaction.sellerDealerId(),
+                        buyerDealerId: transaction.buyerDealerId(),
+                        buyerContactId: transaction.buyerContactId
+                    }
+                });
+            }
+            transaction.firstTimeLoading = false;
+        }).extend({rateLimit: 0});
     }
 
     // Fetch the initial data.
