@@ -63,7 +63,7 @@ function Transaction(data, transactionUri) {
     self.year = data.year;
     self.sellers = ko.observableArray(data.sellers);
     self.buyers = ko.observableArray(data.buyers);
-    self.buyerContacts = ko.observable(data.buyerContacts);
+    self.buyerContacts = ko.observableArray();
     self.firstTimeLoading = true;
 
     self.importable = ko.computed(function () {

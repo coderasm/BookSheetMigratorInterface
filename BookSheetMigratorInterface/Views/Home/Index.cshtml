@@ -22,9 +22,11 @@
                     </div>
                     <div class="row">
                         <div class="col-md-3">
-                            <select data-bind="foreach: sellers, value: sellerDealerId" size="4">
-                                <option data-bind="text: companyName, value: dealerId"></option>
+                            <select data-bind="options: sellers, optionText: 'name', optionCaption: 'Select...', value: sellerDealerId" size="4">
                             </select>
+                            @*<select data-bind="foreach: sellers, value: sellerDealerId" size="4">
+                                <option data-bind="text: companyName, value: dealerId"></option>
+                            </select>*@
                         </div>
                         <div class="col-md-3">
                             <select data-bind="foreach: buyers, value: buyerDealerId" size="4">

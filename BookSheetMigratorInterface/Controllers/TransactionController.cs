@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using BookSheetMigration;
@@ -41,43 +39,12 @@ namespace BookSheetMigratorInterface.Controllers
             return transactions;
         }
 
+        [NonAction]
         private Task attachDealersAndContactsTo(List<AWGTransactionDTO> transactions)
         {
             return Task.Run(() => {
-                        findBuyingDealersForTransactions(transactions);
-                        findSellingDealersForTransactions(transactions);
-                        findBuyingDealersContactsForTransactions(transactions);
-                   });
-        }
-
-        [NonAction]
-        private void findBuyingDealersForTransactions(List<AWGTransactionDTO> transactions)
-        {
-            transactions.ForEach((t) =>
-            {
-                var buyingDealerMatcher = new TransactionBuyerDealerIdMatcher(t);
-                t.buyers = buyingDealerMatcher.foundDealers;
-            });
-        }
-
-        [NonAction]
-        private void findSellingDealersForTransactions(List<AWGTransactionDTO> transactions)
-        {
-            transactions.ForEach((t) =>
-            {
-                var sellingDealerMatcher = new TransactionSellerDealerIdMatcher(t);
-                t.sellers = sellingDealerMatcher.foundDealers;
-            });
-        }
-
-
-
-        private void findBuyingDealersContactsForTransactions(List<AWGTransactionDTO> transactions)
-        {
-            transactions.ForEach((t) =>
-            {
-                var buyingDealerContactMatcher = new TransactionBuyerContactIdMatcher(t);
-                t.buyerContacts = buyingDealerContactMatcher.foundContacts;
+                var transactionCollectionLoader = new TransactionCollectionLoader(transactions);
+                transactionCollectionLoader.loadDependentCollections();
             });
         }
 
