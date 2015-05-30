@@ -5,93 +5,97 @@
 <div class="page-header">
     <h1>BookSheet Transaction Migration Service</h1>
 </div>
-<div class=".container-fluid">
+<div class=".container-fluid" data-bind="loadingWhen: hasTransactions">
     <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default" data-bind="foreach: transactions">
-                <div class="panel-heading">
-                    <h2 class="panel-title">Transaction <span data-bind="text: transactionId"></span> in event <span data-bind="text: eventId"></span></h2>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-3">SellerID</div>
-                        <div class="col-md-3">BuyerID</div>
-                        <div class="col-md-3">BuyerContactID</div>
-                        <div class="col-md-1">Year</div>
-                        <div class="col-md-2">Make</div>
+        <div class=" col-md-12" data-bind="foreach: {data: transactions, afterAdd: fadeIn}">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title">Transaction <span data-bind="text: transactionId"></span> in event <span data-bind="text: eventId"></span></h2>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="sellerDealer">Seller</label>
+                            <select id="sellerDealer" class="form-control" data-bind="foreach: sellers, value: sellerDealerId" size="4">
+                                <option data-bind="text: companyName, value: dealerId"></option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <select data-bind="options: sellers, optionText: 'name', optionCaption: 'Select...', value: sellerDealerId" size="4">
-                            </select>
-                            @*<select data-bind="foreach: sellers, value: sellerDealerId" size="4">
-                                <option data-bind="text: companyName, value: dealerId"></option>
-                            </select>*@
-                        </div>
-                        <div class="col-md-3">
-                            <select data-bind="foreach: buyers, value: buyerDealerId" size="4">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="buyerDealer">Buyer</label>
+                            <select id="buyerDealer" class="form-control" data-bind="foreach: buyers, value: buyerDealerId" size="4">
                                 <option data-bind="text: companyName, value: dealerId"></option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <select data-bind="foreach: buyerContacts, value: buyerContactId" size="4">
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="buyerContact">Buyer Contact</label>
+                            <select id="buyerContact" class="form-control" data-bind="foreach: buyerContacts, value: buyerContactId" size="4">
                                 <option data-bind="text: name, value: contactId"></option>
                             </select>
                         </div>
-                        <div class="col-md-1">
-                            <span data-bind="text: year"></span>
-                        </div>
-                        <div class="col-md-2">
-                            <span data-bind="text: make"></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span class="clearfix">Year</span>
+                        <span data-bind="text: year"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <span class="clearfix">Make</span>
+                        <span data-bind="text: make"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <span class="clearfix">Model</span>
+                        <span data-bind="text: model"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="buyerContact">Bid Amount</label>
+                            <input class="form-control" data-bind="value: bidAmount" />
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-4">Model</div>
-                        <div class="col-md-1">Bid Amount</div>
-                        <div class="col-md-1">Transport Fee</div>
-                        <div class="col-md-3">VIN</div>
-                        <div class="col-md-3">soldDate</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <span data-bind ="text: model"></span>
-                        </div>
-                        <div class="col-md-1">
-                            <input data-bind="value: bidAmount"/>
-                        </div>
-                        <div class="col-md-1">
-                            <input data-bind="text: transportFee"/>
-                        </div>
-                        <div class="col-md-3">
-                            <span data-bind="text: vin"></span>
-                        </div>
-                        <div class="col-md-3">
-                            <span data-bind="text: soldDate"></span>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="buyerContact">Transport Fee</label>
+                            <input class="form-control" data-bind="value: transportFee" />
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <button data-bind="click: importSale, enable: importable">Import</button>
-                        </div>
+                    <div class="col-md-2">
+                        <span class="clearfix">VIN</span>
+                        <span data-bind="text: vin"></span>
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h2 class="panel-title">Seller Information</h2>
-                        </div>
-                        <div class="panel-body">
+                    <div class="col-md-3">
+                        <span class="clearfix">Sold Date</span>
+                        <span data-bind="text: soldDate"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <button data-bind="click: importSale, enable: importable">Import</button>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">Seller Information</h2>
+                    </div>
+                    <div class="panel-body">
 
-                        </div>
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h2 class="panel-title">Buyer Information</h2>
-                        </div>
-                        <div class="panel-body">
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">Buyer Information</h2>
+                    </div>
+                    <div class="panel-body">
 
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </div>

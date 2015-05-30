@@ -25,8 +25,9 @@ namespace BookSheetMigratorInterface
                       "~/Content/site.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
+              "~/Scripts/require.js",
               "~/Scripts/knockout-{version}.js",
-              "~/Scripts/app/app.js"));
+              "~/Scripts/app/main.js"));
         }
     }
 }
