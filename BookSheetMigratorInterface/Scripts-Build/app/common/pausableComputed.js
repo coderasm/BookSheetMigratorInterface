@@ -1,0 +1,1 @@
+define(["knockout"],function(e){e.pauseableComputed=function(t,n){var r="",i=e.observable(!1),s=e.computed(function(){return i()?r:t.call(n)},n);return s.pause=function(){r=this(),i(!0)}.bind(s),s.resume=function(){r="",i(!1)},s}});

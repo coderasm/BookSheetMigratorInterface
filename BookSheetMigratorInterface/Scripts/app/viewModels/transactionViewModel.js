@@ -4,10 +4,10 @@
         self.transactionUri = transactionUri;
         self.eventId = data.eventId;
         self.transactionId = data.transactionId;
-        self.bidAmount = ko.observable(data.bidAmount);
-        self.soldDate = ko.observable(data.soldDate);
+        self.bidAmount = new BidAmountObservable(data.bidAmount);
+        self.soldDate = new DateObserveable(data.soldDate);
         self.sellerDmvNumber = data.sellerDmvNumber;
-        self.sellerDealerId = ko.observable(data.sellerDealerId);
+        self.sellerDealerId = new IdObservable(data.sellerDealerId);
         self.sellerCompanyName = data.sellerCompanyName;
         self.sellerLastName = data.sellerLastName;
         self.sellerFirstName = data.sellerFirstName;
@@ -17,8 +17,8 @@
         self.sellerZip = data.sellerZip;
         self.sellerPhone = data.sellerPhone;
         self.buyerDmvNumber = data.buyerDmvNumber;
-        self.buyerDealerId = ko.observable(data.buyerDealerId);
-        self.buyerContactId = ko.observable(data.buyerContactId);
+        self.buyerDealerId = IdObservable(data.buyerDealerId);
+        self.buyerContactId = IdObservable(data.buyerContactId);
         self.buyerCompanyName = data.buyerCompanyName;
         self.buyerLastName = data.buyerLastName;
         self.buyerFirstName = data.buyerFirstName;
@@ -27,7 +27,7 @@
         self.buyerState = data.buyerState;
         self.buyerZip = data.buyerZip;
         self.buyerPhone = data.buyerPhone;
-        self.transportFee = ko.observable(data.transportFee);
+        self.transportFee = TransportFeeObservable(data.transportFee);
         self.mileage = data.mileage;
         self.make = data.make;
         self.model = data.model;
@@ -42,26 +42,55 @@
             clearBuyerContactId();
         });
 
+        self.changes = {};
+
+        self.doImport = ko.observable(false);
+
         self.importable = ko.computed(function() {
             return self.sellerDealerId() != null && self.buyerDealerId() != null && self.buyerContactId() != null
-                && self.bidAmount() > 1000 && self.transportFee();
+                && self.bidAmount() > 1000 && self.transportFee() >= 0 && !hasChanges();
         });
+
+        function hasChanges() {
+            return Object.keys(self.changes).length !== 0;
+        }
+        
+        self.update = function() {
+            if (hasChanges()) {
+                var postData = {
+                    transactions: [self.changes]
+                }
+                postData = addTransactionIdsTo(postData);
+                $.ajax({
+                    url: self.transactionUri + "update",
+                    type: "POST",
+                    data: postData,
+                    contenType: 'json',
+                    success: function(results) {
+                        if(results.success)
+
+                    }
+                });
+            }
+        }
 
         self.importSale = function() {
             var postData = {
-                transactions: [
-                    {
-                        eventId: self.eventId,
-                        transactionId: self.transactionId
-                    }
-                ]
+                transactions: [{}]
             }
+            postData = addTransactionIdsTo(postData);
             $.ajax({
                 url: self.transactionUri + "import",
                 type: "POST",
                 data: postData,
-                contentType: 'application/json'
+                contentType: 'json'
             });
+        }
+
+        function addTransactionIdsTo(transactions) {
+            postData.eventId = self.eventId;
+            postData.transactionId = self.transactionId;
+            return postData;
         }
 
         function initializeBuyerContacts() {

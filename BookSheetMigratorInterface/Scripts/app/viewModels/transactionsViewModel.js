@@ -1,4 +1,4 @@
-﻿define(['knockout', 'transactionViewModel'], function (ko) {
+﻿define(['knockout', 'app/viewModels/transactionViewModel', 'app/bindings/isLoadingWhen'], function (ko, Transaction) {
     return function transactionsViewModel() {
         var self = this;
         self.transactions = ko.observableArray();
@@ -33,18 +33,6 @@
             });
         }
 
-        self.pauseAllUpdateListeners = function () {
-            ko.utils.arrayForEach(self.transactions, function (transaction) {
-                transaction.update.pause();
-            });
-        }
-
-        self.resumeAllUpdateListeners = function () {
-            ko.utils.arrayForEach(self.transactions, function (transaction) {
-                transaction.update.resume();
-            });
-        }
-
         self.pullNewAndUpdateExistingTransactions = function () {
 
         }
@@ -58,27 +46,6 @@
                 });
                 self.transactions(mappedTransactions);
             });
-        }
-
-        self.attachUpdater = function (transaction) {
-            transaction.update = ko.pauseableComputed(function () {
-                if (!transaction.firstTimeLoading) {
-                    $.ajax({
-                        url: transaction.transactionUri + "update",
-                        type: 'PUT',
-                        data: {
-                            eventId: transaction.eventId,
-                            transactionId: transaction.transactionId,
-                            bidAmount: transaction.bidAmount(),
-                            soldDate: transaction.soldDate(),
-                            sellerDealerId: transaction.sellerDealerId(),
-                            buyerDealerId: transaction.buyerDealerId(),
-                            buyerContactId: transaction.buyerContactId
-                        }
-                    });
-                }
-                transaction.firstTimeLoading = false;
-            }).extend({ rateLimit: 0 });
         }
 
         // Fetch the initial data.

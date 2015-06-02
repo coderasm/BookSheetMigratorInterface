@@ -1,101 +1,101 @@
-﻿@section scripts {
-    @Scripts.Render("~/bundles/app")
-}
-
-<div class="page-header">
+﻿<div class="page-header">
     <h1>BookSheet Transaction Migration Service</h1>
 </div>
-<div class=".container-fluid" data-bind="loadingWhen: hasTransactions">
+<div class=".container-fluid" data-bind="loadingWhen: hasTransactions, visible: hasTransactions">
     <div class="row">
         <div class=" col-md-12" data-bind="foreach: {data: transactions, afterAdd: fadeIn}">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h2 class="panel-title">Transaction <span data-bind="text: transactionId"></span> in event <span data-bind="text: eventId"></span></h2>
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="sellerDealer">Seller</label>
-                            <select id="sellerDealer" class="form-control" data-bind="foreach: sellers, value: sellerDealerId" size="4">
-                                <option data-bind="text: companyName, value: dealerId"></option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="buyerDealer">Buyer</label>
-                            <select id="buyerDealer" class="form-control" data-bind="foreach: buyers, value: buyerDealerId" size="4">
-                                <option data-bind="text: companyName, value: dealerId"></option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="buyerContact">Buyer Contact</label>
-                            <select id="buyerContact" class="form-control" data-bind="foreach: buyerContacts, value: buyerContactId" size="4">
-                                <option data-bind="text: name, value: contactId"></option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-1">
-                        <span class="clearfix">Year</span>
-                        <span data-bind="text: year"></span>
-                    </div>
-                    <div class="col-md-2">
-                        <span class="clearfix">Make</span>
-                        <span data-bind="text: make"></span>
-                    </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Transaction <span data-bind="text: transactionId"></span> in event <span data-bind="text: eventId"></span></h2>
                 </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        <span class="clearfix">Model</span>
-                        <span data-bind="text: model"></span>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="buyerContact">Bid Amount</label>
-                            <input class="form-control" data-bind="value: bidAmount" />
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="sellerDealer">Seller</label>
+                                <select id="sellerDealer" class="form-control" data-bind="foreach: sellers, value: sellerDealerId" size="4">
+                                    <option data-bind="text: companyName, value: dealerId"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="buyerDealer">Buyer</label>
+                                <select id="buyerDealer" class="form-control" data-bind="foreach: buyers, value: buyerDealerId" size="4">
+                                    <option data-bind="text: companyName, value: dealerId"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="buyerContact">Buyer Contact</label>
+                                <select id="buyerContact" class="form-control" data-bind="foreach: buyerContacts, value: buyerContactId" size="4">
+                                    <option data-bind="text: name, value: contactId"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <span class="clearfix">Year</span>
+                            <span data-bind="text: year"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <span class="clearfix">Make</span>
+                            <span data-bind="text: make"></span>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="buyerContact">Transport Fee</label>
-                            <input class="form-control" data-bind="value: transportFee" />
+                    <div class="row">
+                        <div class="col-md-3">
+                            <span class="clearfix">Model</span>
+                            <span data-bind="text: model"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="buyerContact">Bid Amount</label>
+                                <input class="form-control" data-bind="value: bidAmount" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="buyerContact">Transport Fee</label>
+                                <input class="form-control" data-bind="value: transportFee" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <span class="clearfix">VIN</span>
+                            <span data-bind="text: vin"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="clearfix">Sold Date</span>
+                            <span data-bind="text: soldDate"></span>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <span class="clearfix">VIN</span>
-                        <span data-bind="text: vin"></span>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <button data-bind="click: importSale, enable: importable">Import</button>
+                        </div>
                     </div>
-                    <div class="col-md-3">
-                        <span class="clearfix">Sold Date</span>
-                        <span data-bind="text: soldDate"></span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-2">
-                        <button data-bind="click: importSale, enable: importable">Import</button>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h2 class="panel-title">Seller Information</h2>
-                    </div>
-                    <div class="panel-body">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Seller Information</h2>
+                        </div>
+                        <div class="panel-body">
 
+                        </div>
                     </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h2 class="panel-title">Buyer Information</h2>
-                    </div>
-                    <div class="panel-body">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Buyer Information</h2>
+                        </div>
+                        <div class="panel-body">
 
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Warning!</strong> Better check yourself, you're not looking too good.
+        </div>
     </div>
 </div>

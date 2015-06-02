@@ -1,4 +1,4 @@
-﻿define(['knockout'], function (ko) {
+﻿define(['knockout', 'bootstrap', 'respond'], function (ko) {
     ko.bindingHandlers.loadingWhen = {
         init: function (element) {
             var

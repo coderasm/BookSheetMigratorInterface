@@ -1,0 +1,1 @@
+define(["jquery","underscore","knockout","app/viewModels/transactionsViewModel"],function(e,t,n,r){var i=function(){};return t.extend(i.prototype,{init:function(){console.log("Init..."),n.applyBindings(new r)}}),new i});
