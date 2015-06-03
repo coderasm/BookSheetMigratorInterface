@@ -6,6 +6,7 @@
         self.hasTransactions = ko.computed(function () {
             return self.transactions().length > 0;
         });
+
         self.fadeIn = function (element) {
             $(element).hide();
             $(element).fadeIn(1000);
@@ -40,9 +41,7 @@
         function getAllTransactions() {
             ajaxHelper(transactionUri + "unimported", 'GET').done(function (data) {
                 var mappedTransactions = $.map(data, function (item) {
-                    var transaction = new Transaction(item, transactionUri);
-                    self.attachUpdater(transaction);
-                    return transaction;
+                    return new Transaction(item, transactionUri);
                 });
                 self.transactions(mappedTransactions);
             });

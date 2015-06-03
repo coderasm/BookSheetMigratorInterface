@@ -1,12 +1,12 @@
 ﻿define(['jquery', 'underscore', 'knockout', 'app/viewModels/transactionsViewModel', 'domReady!'], function ($, _, ko, transactionsViewModel) {
-    var App = function () { };
+    var app = function () { };
 
-    _.extend(App.prototype, {
+    _.extend(app.prototype, {
         init: function () {
             console.log("Init...");
             ko.applyBindings(new transactionsViewModel());
         }
     });
 
-    return new App();
+    return new app();
 });
