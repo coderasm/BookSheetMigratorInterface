@@ -1,39 +1,21 @@
 ﻿define([
-        'knockout', 'app/viewModels/TrackableBidAmount',
-        'app/viewModels/TrackableSoldDate', 'app/viewModels/TrackableId',
-        'app/viewModels/TrackableTransportFee', 'app/bindings/datePicker'
+        'knockout', 'app/bindings/dateTimePicker'
 ],
-       function(ko, TrackableBidAmount, TrackableSoldDate, TrackableId, TrackableTransportFee) {
+       function (ko) {
            return function Transaction(data, transactionUri) {
                var self = this;
-               self.transactionUri = transactionUri;
                self.eventId = data.eventId;
                self.transactionId = data.transactionId;
-               self.changes = ko.observableArray([]);
-               self.bidAmount = new TrackableBidAmount(data.bidAmount, self.changes).dataItem;
-               self.soldDate = new TrackableSoldDate(data.soldDate, self.changes).dataItem;
+               self.bidAmount = ko.observable(data.bidAmount);
+               self.soldDate = ko.observable(data.soldDate);
                self.sellerDmvNumber = data.sellerDmvNumber;
-               self.sellerDealerId = new TrackableId("sellerDealerId", data.sellerDealerId, self.changes).dataItem;
+               self.sellerDealerId = ko.observable(data.sellerDealerId);
                self.sellerCompanyName = data.sellerCompanyName;
-               self.sellerLastName = data.sellerLastName;
-               self.sellerFirstName = data.sellerFirstName;
-               self.sellerAddress = data.sellerAddress;
-               self.sellerCity = data.sellerCity;
-               self.sellerState = data.sellerState;
-               self.sellerZip = data.sellerZip;
-               self.sellerPhone = data.sellerPhone;
                self.buyerDmvNumber = data.buyerDmvNumber;
-               self.buyerDealerId = new TrackableId("buyerDealerId", data.buyerDealerId, self.changes).dataItem;
-               self.buyerContactId = new TrackableId("buyerContactId", data.buyerContactId, self.changes).dataItem;
+               self.buyerDealerId = ko.observable(data.buyerDealerId);
+               self.buyerContactId = ko.observable(data.buyerContactId);
                self.buyerCompanyName = data.buyerCompanyName;
-               self.buyerLastName = data.buyerLastName;
-               self.buyerFirstName = data.buyerFirstName;
-               self.buyerAddress = data.buyerAddress;
-               self.buyerCity = data.buyerCity;
-               self.buyerState = data.buyerState;
-               self.buyerZip = data.buyerZip;
-               self.buyerPhone = data.buyerPhone;
-               self.transportFee = new TrackableTransportFee(data.transportFee, self.changes).dataItem;
+               self.transportFee = ko.observable(data.transportFee);
                self.mileage = data.mileage;
                self.make = data.make;
                self.model = data.model;
@@ -41,9 +23,9 @@
                self.year = data.year;
                self.sellers = ko.observableArray(data.sellers);
                self.buyers = ko.observableArray(data.buyers);
-               self.buyerContacts = ko.observableArray();
+               self.buyerContacts = ko.observableArray([]);
                self.firstTimeLoading = true;
-               self.buyerDealerId.subscribe(function() {
+               self.buyerDealerId.subscribe(function () {
                    setBuyerContacts();
                    clearBuyerContactId();
                });
@@ -52,53 +34,45 @@
                    return self.error() !== "";
                });
                self.success = ko.observable("");
-               self.hasSuccess = ko.computed(function() {
+               self.hasSuccess = ko.computed(function () {
                    return self.success() !== "";
                });
 
-               self.hasChanges = ko.computed(function () {
-                   return self.changes().length > 0;
-               });
-
-               self.importable = ko.computed(function() {
+               self.importable = ko.computed(function () {
                    return self.sellerDealerId() != null && self.buyerDealerId() != null && self.buyerContactId() != null
-                       && self.bidAmount() > 1000 && self.transportFee() >= 0 && !self.hasChanges();
+                       && self.bidAmount() > 1000 && self.transportFee() >= 0;
                });
-        
-               self.updateSale = function() {
-                   if (self.hasChanges()) {
-                       var postData = {
-                           transactions: [{
-                               changes: self.changes()
-                           }]
-                       }
-                       postData = addTransactionIdsTo(postData);
-                       $.ajax({
-                           url: self.transactionUri + "update",
-                           type: "POST",
-                           data: postData,
-                           contenType: 'json',
-                           success: function(results) {
-                               if (results.success)
-                                   self.success("Update Successful");
-                               else
-                                   self.success("Update Not Successful");
-                           }
-                       });
-                   }
-               }
 
-               self.importSale = function() {
+               self.updateSale = function () {
                    var postData = {
                        transactions: [{}]
                    }
                    postData = addTransactionIdsTo(postData);
                    $.ajax({
-                       url: self.transactionUri + "import",
+                       url: transactionUri + "update",
+                       type: "POST",
+                       data: postData,
+                       contenType: 'json',
+                       success: function (results) {
+                           if (results.success)
+                               self.success("Update Successful");
+                           else
+                               self.success("Update Not Successful");
+                       }
+                   });
+               }
+
+               self.importSale = function () {
+                   var postData = {
+                       transactions: [{}]
+                   }
+                   postData = addTransactionIdsTo(postData);
+                   $.ajax({
+                       url: transactionUri + "import",
                        type: "POST",
                        data: postData,
                        contentType: 'json',
-                       success: function(results) {
+                       success: function (results) {
                            if (results.success)
                                self.success("Import Successful");
                            else
@@ -122,7 +96,7 @@
                }
 
                function setBuyerContacts() {
-                   self.buyers().every(function(buyer) {
+                   self.buyers().every(function (buyer) {
                        if (buyer.dealerId === self.buyerDealerId()) {
                            self.buyerContacts(buyer.contacts);
                            return false;

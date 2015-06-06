@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using BookSheetMigration;
+using BookSheetMigration.HoldingTableToWebInterface;
 
 namespace BookSheetMigratorInterface.Controllers
 {
@@ -19,13 +21,14 @@ namespace BookSheetMigratorInterface.Controllers
             findAndAttachAllBuyingDealersContactsForTransactions(transactions);
         }
 
+        private void findAndAttachSellingDealersForTransactions(List<AWGTransactionDTO> transactions)
+        {
+            transactions.ForEach(setPossibleSellerDealers);
+        }
+
         private void findAndAttachBuyingDealersForTransactions(List<AWGTransactionDTO> transactions)
         {
-            transactions.ForEach((t) =>
-            {
-                var buyerDealersInserter = new BuyerDealersInserter(t);
-                buyerDealersInserter.insertCollectionIfFound();
-            });
+            transactions.ForEach(setPossibleBuyerDealers);
         }
 
         private void findAndAttachAllBuyingDealersContactsForTransactions(List<AWGTransactionDTO> transactions)
@@ -39,6 +42,47 @@ namespace BookSheetMigratorInterface.Controllers
             });
         }
 
+        private void setPossibleSellerDealers(AWGTransactionDTO t)
+        {
+            CollectionInserter<DealerDTO> sellerDealersInserter = new SellerDealersInserterByDmvNumber(t);
+            if (insertedDealersUsingDmvNumber(sellerDealersInserter))
+                return;
+            sellerDealersInserter = new SellerDealersInserterByPhoneNumber(t);
+            if (insertedDealersUsingPhoneNumber(sellerDealersInserter))
+                return;
+            sellerDealersInserter = new SellerDealersInserterByAddressAndCity(t);
+            if (insertedDealersUsingAddressAndCity(sellerDealersInserter))
+                return;
+        }
+
+        private void setPossibleBuyerDealers(AWGTransactionDTO t)
+        {
+            CollectionInserter<DealerDTO> buyerDealersInserter = new BuyerDealersInserterByDmvNumber(t);
+            if (insertedDealersUsingDmvNumber(buyerDealersInserter))
+                return;
+            buyerDealersInserter = new BuyerDealersInserterByPhoneNumber(t);
+            if (insertedDealersUsingPhoneNumber(buyerDealersInserter))
+                return;
+            buyerDealersInserter = new BuyerDealersInserterByAddressAndCity(t);
+            if (insertedDealersUsingAddressAndCity(buyerDealersInserter))
+                return;
+        }
+
+        private bool insertedDealersUsingDmvNumber(CollectionInserter<DealerDTO> sellerDealersInserter)
+        {
+            return sellerDealersInserter.insertCollectionIfFound();
+        }
+
+        private bool insertedDealersUsingPhoneNumber(CollectionInserter<DealerDTO> sellerDealersInserter)
+        {
+            return sellerDealersInserter.insertCollectionIfFound();
+        }
+
+        private bool insertedDealersUsingAddressAndCity(CollectionInserter<DealerDTO> sellerDealersInserter)
+        {
+            return sellerDealersInserter.insertCollectionIfFound();
+        }
+
         private bool buyersWereFound(AWGTransactionDTO transaction)
         {
             return transaction.buyers != null;
@@ -46,19 +90,10 @@ namespace BookSheetMigratorInterface.Controllers
 
         private void findAndAttachContacts(AWGTransactionDTO t)
         {
-            t.buyers.ForEach((b) =>
+            t.buyers.ForEach(b =>
             {
                 var buyerContactsInserter = new BuyerContactsInserter(b);
                 buyerContactsInserter.insertCollectionIfFound();
-            });
-        }
-
-        private void findAndAttachSellingDealersForTransactions(List<AWGTransactionDTO> transactions)
-        {
-            transactions.ForEach((t) =>
-            {
-                var sellerDealersInserter = new SellerDealersInserter(t);
-                sellerDealersInserter.insertCollectionIfFound();
             });
         }
     }
