@@ -234,7 +234,9 @@
     <Content Include="Scripts\app\app.js" />
     <Content Include="Scripts\app\bindings\dateTimePicker.js" />
     <Content Include="Scripts\app\bindings\isLoadingWhen.js" />
+    <Content Include="Scripts\app\bindings\pagination.js" />
     <Content Include="Scripts\app\common\pausableComputed.js" />
+    <Content Include="Scripts\app\utilities\utilities.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Scripts\main.js" />
@@ -315,7 +317,7 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BookSheetMigration.Test\BookSheetMigration\BookSheetMigration.csproj">
+    <ProjectReference Include="..\..\BookSheetMigration\BookSheetMigration\BookSheetMigration.csproj">
       <Project>{b85b5666-353b-4f1b-8c8d-cc2cf04c253e}</Project>
       <Name>BookSheetMigration</Name>
     </ProjectReference>

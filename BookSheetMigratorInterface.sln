@@ -7,9 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookSheetMigratorInterface"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookSheetMigratorInterface.Tests", "BookSheetMigratorInterface.Tests\BookSheetMigratorInterface.Tests.csproj", "{DDD09BF8-4B3F-4D38-852C-93714BC978C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookSheetMigration.Test", "..\BookSheetMigration.Test\BookSheetMigration.Test\BookSheetMigration.Test.csproj", "{A438722B-62CE-44E4-839C-C6FAA2B1345F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookSheetMigration", "..\BookSheetMigration.Test\BookSheetMigration\BookSheetMigration.csproj", "{B85B5666-353B-4F1B-8C8D-CC2CF04C253E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookSheetMigration", "..\BookSheetMigration\BookSheetMigration\BookSheetMigration.csproj", "{B85B5666-353B-4F1B-8C8D-CC2CF04C253E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +23,6 @@ Global
 		{DDD09BF8-4B3F-4D38-852C-93714BC978C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDD09BF8-4B3F-4D38-852C-93714BC978C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDD09BF8-4B3F-4D38-852C-93714BC978C7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A438722B-62CE-44E4-839C-C6FAA2B1345F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A438722B-62CE-44E4-839C-C6FAA2B1345F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A438722B-62CE-44E4-839C-C6FAA2B1345F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A438722B-62CE-44E4-839C-C6FAA2B1345F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B85B5666-353B-4F1B-8C8D-CC2CF04C253E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B85B5666-353B-4F1B-8C8D-CC2CF04C253E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B85B5666-353B-4F1B-8C8D-CC2CF04C253E}.Release|Any CPU.ActiveCfg = Release|Any CPU

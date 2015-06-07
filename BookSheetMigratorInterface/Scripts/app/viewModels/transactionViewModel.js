@@ -11,10 +11,16 @@
                self.sellerDmvNumber = data.sellerDmvNumber;
                self.sellerDealerId = ko.observable(data.sellerDealerId);
                self.sellerCompanyName = data.sellerCompanyName;
+               self.sellerPhone = data.sellerPhone;
+               self.sellerAddress = data.sellerAddress;
+               self.sellerCity = data.sellerCity;
                self.buyerDmvNumber = data.buyerDmvNumber;
                self.buyerDealerId = ko.observable(data.buyerDealerId);
                self.buyerContactId = ko.observable(data.buyerContactId);
                self.buyerCompanyName = data.buyerCompanyName;
+               self.buyerPhone = data.buyerPhone;
+               self.buyerAddress = data.buyerAddress;
+               self.buyerCity = data.buyerCity;
                self.transportFee = ko.observable(data.transportFee);
                self.mileage = data.mileage;
                self.make = data.make;

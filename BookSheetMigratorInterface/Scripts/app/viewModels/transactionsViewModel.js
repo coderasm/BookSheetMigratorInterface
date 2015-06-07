@@ -1,5 +1,7 @@
 ﻿define([
-        'knockout', 'app/viewModels/transactionViewModel', 'app/bindings/isLoadingWhen'
+        'knockout', 'app/viewModels/transactionViewModel',
+        'app/bindings/isLoadingWhen', 'app/bindings/pagination',
+        'app/utilities/utilities'
 ],
         function (ko, Transaction) {
             return function transactionsViewModel() {
@@ -9,10 +11,35 @@
                 self.hasTransactions = ko.computed(function () {
                     return self.transactions().length > 0;
                 });
+                self.filter = ko.observable("");
+                self.filteredTransactions = ko.computed(function() {
+                    var filter = self.filter().toLowerCase();
+                    if (!filter) {
+                        return self.transactions();
+                    } else {
+                        return ko.utils.arrayFilter(self.transactions(), function(item) {
+                            return item.sellerCompanyName.toLowerCase().startsWith(filter) ||
+                                   item.buyerCompanyName.toLowerCase().startsWith(filter) ||
+                                   item.sellerDmvNumber.toLowerCase().startsWith(filter) ||
+                                   item.buyerDmvNumber.toLowerCase().startsWith(filter);
+                        });
+                    }
+                });
+                self.itemCount = ko.computed(function() { 
+                    return self.transactions().length;
+                }),
+                self.perPage = ko.observable(10),
+                self.pageIndex = ko.observable(0),
+                self.page = ko.computed(function() {
+                    var startingIndex = self.pageIndex() * self.perPage();
+                    return self.filteredTransactions().slice(
+                      startingIndex,                  
+                      startingIndex + self.perPage());
+                });
 
                 self.fadeIn = function (element) {
                     $(element).hide();
-                    $(element).fadeIn(1000);
+                    $(element).fadeIn(500);
                 }
 
                 var transactionUri = '/api/Transaction/';
