@@ -19,9 +19,15 @@
                     } else {
                         return ko.utils.arrayFilter(self.transactions(), function(item) {
                             return item.sellerCompanyName.toLowerCase().startsWith(filter) ||
-                                   item.buyerCompanyName.toLowerCase().startsWith(filter) ||
                                    item.sellerDmvNumber.toLowerCase().startsWith(filter) ||
-                                   item.buyerDmvNumber.toLowerCase().startsWith(filter);
+                                   item.sellerPhone.toLowerCase().startsWith(filter) ||
+                                   item.sellerAddress.toLowerCase().startsWith(filter) ||
+                                   item.sellerCity.toLowerCase().startsWith(filter) ||
+                                   item.buyerCompanyName.toLowerCase().startsWith(filter) ||
+                                   item.buyerDmvNumber.toLowerCase().startsWith(filter) ||
+                                   item.buyerPhone.toLowerCase().startsWith(filter) ||
+                                   item.buyerAddress.toLowerCase().startsWith(filter) ||
+                                   item.buyerCity.toLowerCase().startsWith(filter);
                         });
                     }
                 });

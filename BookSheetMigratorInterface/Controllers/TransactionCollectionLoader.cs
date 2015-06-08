@@ -66,21 +66,29 @@ namespace BookSheetMigratorInterface.Controllers
             buyerDealersInserter = new BuyerDealersInserterByAddressAndCity(t);
             if (insertedDealersUsingAddressAndCity(buyerDealersInserter))
                 return;
+            buyerDealersInserter = new BuyerDealersInserterByCompanyName(t);
+            if (insertedDealersUsingCompanyName(buyerDealersInserter))
+                return;
         }
 
-        private bool insertedDealersUsingDmvNumber(CollectionInserter<DealerDTO> sellerDealersInserter)
+        private bool insertedDealersUsingDmvNumber(CollectionInserter<DealerDTO> dealersInserter)
         {
-            return sellerDealersInserter.insertCollectionIfFound();
+            return dealersInserter.insertCollectionIfFound();
         }
 
-        private bool insertedDealersUsingPhoneNumber(CollectionInserter<DealerDTO> sellerDealersInserter)
+        private bool insertedDealersUsingPhoneNumber(CollectionInserter<DealerDTO> dealersInserter)
         {
-            return sellerDealersInserter.insertCollectionIfFound();
+            return dealersInserter.insertCollectionIfFound();
         }
 
-        private bool insertedDealersUsingAddressAndCity(CollectionInserter<DealerDTO> sellerDealersInserter)
+        private bool insertedDealersUsingAddressAndCity(CollectionInserter<DealerDTO> dealersInserter)
         {
-            return sellerDealersInserter.insertCollectionIfFound();
+            return dealersInserter.insertCollectionIfFound();
+        }
+
+        private bool insertedDealersUsingCompanyName(CollectionInserter<DealerDTO> dealersInserter)
+        {
+            return dealersInserter.insertCollectionIfFound();
         }
 
         private bool buyersWereFound(AWGTransactionDTO transaction)

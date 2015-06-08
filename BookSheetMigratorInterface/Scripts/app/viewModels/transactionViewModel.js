@@ -39,14 +39,32 @@
                self.hasError = ko.computed(function () {
                    return self.error() !== "";
                });
+               function setError(error) {
+                   self.error(error);
+               }
                self.success = ko.observable("");
                self.hasSuccess = ko.computed(function () {
                    return self.success() !== "";
                });
 
+               self.hasChanges = ko.computed(function () {
+                   self.sellerDealerId();
+                   self.buyerDealerId();
+                   self.buyerContactId();
+                   self.bidAmount();
+                   self.transportFee();
+                   self.soldDate();
+                   if (self.firstTimeLoading) {
+                       self.firstTimeLoading = false;
+                       return false;
+                   }
+                   setError("Changes have been made. Changes must be submitted before importing.");
+                   return true;
+               });
+
                self.importable = ko.computed(function () {
                    return self.sellerDealerId() != null && self.buyerDealerId() != null && self.buyerContactId() != null
-                       && self.bidAmount() > 1000 && self.transportFee() >= 0;
+                       && self.bidAmount() > 1000 && self.transportFee() >= 0 && !self.hasChanges();
                });
 
                self.updateSale = function () {
@@ -60,10 +78,12 @@
                        data: postData,
                        contenType: 'json',
                        success: function (results) {
-                           if (results.success)
+                           if (results.success) {
                                self.success("Update Successful");
-                           else
-                               self.success("Update Not Successful");
+                               self.error("");
+                               self.hasChanges(false);
+                           } else
+                               self.error("Update Not Successful");
                        }
                    });
                }
