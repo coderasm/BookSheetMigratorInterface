@@ -53,6 +53,19 @@
                    return false;
                });
 
+               self.clearChanges = function() {
+                   revertAllDirtyBack();
+               }
+
+               function revertAllDirtyBack() {
+                   for (key in self) {
+                       if (self.hasOwnProperty(key) && ko.isObservable(self[key]) && typeof self[key].isDirty === "function" && self[key].isDirty()) {
+                           self[key](self[key].originalValue);
+                           self[key].isDirty(false);
+                       }
+                   }
+               }
+
                self.importable = ko.computed(function () {
                    return self.sellerDealerId() != null && self.buyerDealerId() != null && self.buyerContactId() != null
                        && self.bidAmount() > 1000 && self.transportFee() >= 0 && !self.isDirty();
@@ -69,7 +82,7 @@
                        success: function (result) {
                            self.error("");
                            if (result.success) {
-                               resetAllDirty();
+                               updateAllDirtyToNewValues();
                                self.success("Update Successful");
                            } else
                                self.error("Update Not Successful");
@@ -100,10 +113,10 @@
                    return postData;
                }
 
-               function resetAllDirty() {
+               function updateAllDirtyToNewValues() {
                    for (key in self) {
                        if (self.hasOwnProperty(key) && ko.isObservable(self[key]) && typeof self[key].isDirty === 'function' && self[key].isDirty()) {
-                           self[key].orginalValue = self[key]();
+                           self[key].originalValue = self[key]();
                            self[key].isDirty(false);
                        }
                    }

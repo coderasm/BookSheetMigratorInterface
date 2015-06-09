@@ -7,25 +7,25 @@ using Newtonsoft.Json.Linq;
 
 namespace BookSheetMigratorInterface.Controllers
 {
-    [System.Web.Http.RoutePrefix("api/Transaction")]
+    [RoutePrefix("api/Transaction")]
     public class TransactionController : ApiController
     {
         // POST: api/Transaction/import/{
-        [System.Web.Http.Route("import/{eventId:int}/{transactionId:int}")]
+        [Route("import/{eventId:int}/{transactionId:int}")]
         public IEnumerable<string> importTransactions(int eventId, int transactionId)
         {
             return new string[] { "value1", "value2" };
         }
 
         // GET: api/Transaction/imported
-        [System.Web.Http.Route("imported")]
+        [Route("imported")]
         public IEnumerable<string> GetImported()
         {
             return new string[] { "value1", "value2" };
         }
 
         // GET: api/Transaction/unimported
-        [System.Web.Http.Route("unimported")]
+        [Route("unimported")]
         public async Task<IEnumerable<AWGTransactionDTO>> GetUnimported()
         {
             var transactions = await findUnimportedTransactions();
@@ -33,7 +33,7 @@ namespace BookSheetMigratorInterface.Controllers
             return transactions;
         }
 
-        [System.Web.Http.NonAction]
+        [NonAction]
         public async Task<List<AWGTransactionDTO>> findUnimportedTransactions()
         {
             var entityDao = new EntityDAO<AWGTransactionDTO>();
@@ -41,7 +41,7 @@ namespace BookSheetMigratorInterface.Controllers
             return transactions;
         }
 
-        [System.Web.Http.NonAction]
+        [NonAction]
         private Task attachDealersAndContactsTo(List<AWGTransactionDTO> transactions)
         {
             return Task.Run(() => {
@@ -51,7 +51,7 @@ namespace BookSheetMigratorInterface.Controllers
         }
 
         // POST: api/Transaction/update
-        [System.Web.Http.Route("update")]
+        [Route("update")]
         public async Task<object> PostUpdate(JToken json)
         {
             var jsonkeys = extractKeys(json.Value<JObject>());

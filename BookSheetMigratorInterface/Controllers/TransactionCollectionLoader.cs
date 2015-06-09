@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using BookSheetMigration;
 using BookSheetMigration.HoldingTableToWebInterface;
 
@@ -52,6 +51,9 @@ namespace BookSheetMigratorInterface.Controllers
                 return;
             sellerDealersInserter = new SellerDealersInserterByAddressAndCity(t);
             if (insertedDealersUsingAddressAndCity(sellerDealersInserter))
+                return;
+            sellerDealersInserter = new SellerDealersInserterByCompanyName(t);
+            if (insertedDealersUsingCompanyName(sellerDealersInserter))
                 return;
         }
 

@@ -318,7 +318,7 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\BookSheetMigration.Test\BookSheetMigration\BookSheetMigration.csproj">
+    <ProjectReference Include="..\..\BookSheetMigration\BookSheetMigration\BookSheetMigration.csproj">
       <Project>{b85b5666-353b-4f1b-8c8d-cc2cf04c253e}</Project>
       <Name>BookSheetMigration</Name>
     </ProjectReference>
