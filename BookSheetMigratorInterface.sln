@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookSheetMigratorInterface"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookSheetMigratorInterface.Tests", "BookSheetMigratorInterface.Tests\BookSheetMigratorInterface.Tests.csproj", "{DDD09BF8-4B3F-4D38-852C-93714BC978C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookSheetMigration", "..\BookSheetMigration\BookSheetMigration\BookSheetMigration.csproj", "{B85B5666-353B-4F1B-8C8D-CC2CF04C253E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookSheetMigration", "..\BookSheetMigration.Test\BookSheetMigration\BookSheetMigration.csproj", "{B85B5666-353B-4F1B-8C8D-CC2CF04C253E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

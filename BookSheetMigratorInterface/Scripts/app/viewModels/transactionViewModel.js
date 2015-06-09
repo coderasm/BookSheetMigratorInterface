@@ -1,27 +1,28 @@
 ﻿define([
-        'knockout', 'app/bindings/dateTimePicker'
+        'knockout', 'app/bindings/dateTimePicker', 'app/utilities/utilities',
+        'app/extenders/changeTracking'
 ],
        function (ko) {
            return function Transaction(data, transactionUri) {
                var self = this;
                self.eventId = data.eventId;
                self.transactionId = data.transactionId;
-               self.bidAmount = ko.observable(data.bidAmount);
-               self.soldDate = ko.observable(data.soldDate);
+               self.bidAmount = ko.observable(data.bidAmount).extend({trackChange: true});
+               self.soldDate = ko.observable(data.soldDate).extend({ trackChange: true });
                self.sellerDmvNumber = data.sellerDmvNumber;
-               self.sellerDealerId = ko.observable(data.sellerDealerId);
+               self.sellerDealerId = ko.observable(data.sellerDealerId).extend({ trackChange: true });
                self.sellerCompanyName = data.sellerCompanyName;
                self.sellerPhone = data.sellerPhone;
                self.sellerAddress = data.sellerAddress;
                self.sellerCity = data.sellerCity;
                self.buyerDmvNumber = data.buyerDmvNumber;
-               self.buyerDealerId = ko.observable(data.buyerDealerId);
-               self.buyerContactId = ko.observable(data.buyerContactId);
+               self.buyerDealerId = ko.observable(data.buyerDealerId).extend({ trackChange: true });
+               self.buyerContactId = ko.observable(data.buyerContactId).extend({ trackChange: true });
                self.buyerCompanyName = data.buyerCompanyName;
                self.buyerPhone = data.buyerPhone;
                self.buyerAddress = data.buyerAddress;
                self.buyerCity = data.buyerCity;
-               self.transportFee = ko.observable(data.transportFee);
+               self.transportFee = ko.observable(data.transportFee).extend({ trackChange: true });
                self.mileage = data.mileage;
                self.make = data.make;
                self.model = data.model;
@@ -30,7 +31,6 @@
                self.sellers = ko.observableArray(data.sellers);
                self.buyers = ko.observableArray(data.buyers);
                self.buyerContacts = ko.observableArray([]);
-               self.firstTimeLoading = true;
                self.buyerDealerId.subscribe(function () {
                    setBuyerContacts();
                    clearBuyerContactId();
@@ -39,49 +39,38 @@
                self.hasError = ko.computed(function () {
                    return self.error() !== "";
                });
-               function setError(error) {
-                   self.error(error);
-               }
                self.success = ko.observable("");
                self.hasSuccess = ko.computed(function () {
                    return self.success() !== "";
                });
 
-               self.hasChanges = ko.computed(function () {
-                   self.sellerDealerId();
-                   self.buyerDealerId();
-                   self.buyerContactId();
-                   self.bidAmount();
-                   self.transportFee();
-                   self.soldDate();
-                   if (self.firstTimeLoading) {
-                       self.firstTimeLoading = false;
-                       return false;
+               self.isDirty = ko.computed(function () {
+                   for (key in self) {
+                       if (self.hasOwnProperty(key) && ko.isObservable(self[key]) && typeof self[key].isDirty === 'function' && self[key].isDirty()) {
+                           return true;
+                       }
                    }
-                   setError("Changes have been made. Changes must be submitted before importing.");
-                   return true;
+                   return false;
                });
 
                self.importable = ko.computed(function () {
                    return self.sellerDealerId() != null && self.buyerDealerId() != null && self.buyerContactId() != null
-                       && self.bidAmount() > 1000 && self.transportFee() >= 0 && !self.hasChanges();
+                       && self.bidAmount() > 1000 && self.transportFee() >= 0 && !self.isDirty();
                });
 
-               self.updateSale = function () {
-                   var postData = {
-                       transactions: [{}]
-                   }
+               self.updateSale = function (formElement) {
+                   var postData = $(formElement).formToJSON();
                    postData = addTransactionIdsTo(postData);
                    $.ajax({
                        url: transactionUri + "update",
                        type: "POST",
                        data: postData,
                        contenType: 'json',
-                       success: function (results) {
-                           if (results.success) {
+                       success: function (result) {
+                           self.error("");
+                           if (result.success) {
+                               resetAllDirty();
                                self.success("Update Successful");
-                               self.error("");
-                               self.hasChanges(false);
                            } else
                                self.error("Update Not Successful");
                        }
@@ -89,9 +78,7 @@
                }
 
                self.importSale = function () {
-                   var postData = {
-                       transactions: [{}]
-                   }
+                   var postData = {};
                    postData = addTransactionIdsTo(postData);
                    $.ajax({
                        url: transactionUri + "import",
@@ -108,9 +95,18 @@
                }
 
                function addTransactionIdsTo(postData) {
-                   postData.transactions[0].eventId = self.eventId;
-                   postData.transactions[0].transactionId = self.transactionId;
+                   postData.eventId = self.eventId;
+                   postData.transactionId = self.transactionId;
                    return postData;
+               }
+
+               function resetAllDirty() {
+                   for (key in self) {
+                       if (self.hasOwnProperty(key) && ko.isObservable(self[key]) && typeof self[key].isDirty === 'function' && self[key].isDirty()) {
+                           self[key].orginalValue = self[key]();
+                           self[key].isDirty(false);
+                       }
+                   }
                }
 
                function initializeBuyerContacts() {
