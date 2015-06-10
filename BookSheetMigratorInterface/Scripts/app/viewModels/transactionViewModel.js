@@ -71,14 +71,21 @@
                        && self.bidAmount() > 1000 && self.transportFee() >= 0 && !self.isDirty();
                });
 
-               self.updateSale = function (formElement) {
-                   var postData = $(formElement).formToJSON();
+               self.updateSale = function () {
+                   var postData = {
+                       sellerDealerId: self.sellerDealerId(),
+                       buyerDealerId: self.buyerDealerId(),
+                       buyerContactId: self.buyerContactId(),
+                       bidAmount: self.bidAmount(),
+                       transportFee: self.transportFee(),
+                       soldDate: self.soldDate()
+                   };
                    postData = addTransactionIdsTo(postData);
                    $.ajax({
                        url: transactionUri + "update",
                        type: "POST",
                        data: postData,
-                       contenType: 'json',
+                       dataType: 'json',
                        success: function (result) {
                            self.error("");
                            if (result.success) {
@@ -90,16 +97,16 @@
                    });
                }
 
-               self.importSale = function () {
-                   var postData = {};
+               self.importSale = function (formElement) {
+                   var postData = $(formElement).formToJSON();
                    postData = addTransactionIdsTo(postData);
                    $.ajax({
                        url: transactionUri + "import",
                        type: "POST",
                        data: postData,
-                       contentType: 'json',
-                       success: function (results) {
-                           if (results.success)
+                       dataType: 'json',
+                       success: function (result) {
+                           if (result.success)
                                self.success("Import Successful");
                            else
                                self.success("Import Not Successful");

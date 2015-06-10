@@ -19,7 +19,12 @@
                             <h2 class="panel-title">Transaction <span data-bind="text: transactionId"></span> in event <span data-bind="text: eventId"></span></h2>
                         </div>
                         <div class="panel-body">
-                            <form data-bind="submit: updateSale">
+                            <form data-bind="submit: importSale">
+                                <input name="year" type="hidden" data-bind="value: year"/>
+                                <input name="make" type="hidden" data-bind="value: make"/>
+                                <input name="model" type="hidden" data-bind="value: model"/>
+                                <input name="mileage" type="hidden" data-bind="value: mileage"/>
+                                <input name="vin" type="hidden" data-bind="value: vin"/>
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="form-group">
@@ -88,8 +93,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <button data-bind="click: importSale, enable: importable">Import</button>
-                                        <button type="submit">Update</button>
+                                        <button type="submit" data-bind="enable: importable">Import</button>
+                                        <button data-bind="click: updateSale, enable: isDirty">Update</button>
                                         <button data-bind="click: clearChanges, enable: isDirty">Clear Changes</button>
                                     </div>
                                 </div>

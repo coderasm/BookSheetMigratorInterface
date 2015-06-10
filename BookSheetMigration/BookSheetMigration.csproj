@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B85B5666-353B-4F1B-8C8D-CC2CF04C253E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BookSheetMigration</RootNamespace>
+    <AssemblyName>BookSheetMigration</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AsyncPoco">
+      <HintPath>..\packages\AsyncPoco.1.1.2\lib\net45\AsyncPoco.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AwgToHoldingTable\AWGEventDTO.cs" />
+    <Compile Include="AwgToHoldingTable\AWGEventDirectory.cs" />
+    <Compile Include="AwgToHoldingTable\BookSheetEventMigrator.cs" />
+    <Compile Include="AwgToHoldingTable\AWGInventoryDirectory.cs" />
+    <Compile Include="AwgToHoldingTable\AWGInventoryDTO.cs" />
+    <Compile Include="AwgToHoldingTable\AWGServiceClient.cs" />
+    <Compile Include="AwgToHoldingTable\AWGSoapRequestMessageBuilder.cs" />
+    <Compile Include="AwgToHoldingTable\AWGTransactionDirectory.cs" />
+    <Compile Include="AwgToHoldingTable\BuyerDealerIdInserterByAddressAndCity.cs" />
+    <Compile Include="AwgToHoldingTable\BuyerDealerIdInserterByPhoneNumber.cs" />
+    <Compile Include="AwgToHoldingTable\BuyerDealerIdInserterByCompanyName.cs" />
+    <Compile Include="AwgToHoldingTable\SellerDealerIdInserterByAddressAndCity.cs" />
+    <Compile Include="AwgToHoldingTable\SellerDealerIdInserterByCompanyName.cs" />
+    <Compile Include="DealersFinderByAddressAndCity.cs" />
+    <Compile Include="DealersFinderByCompanyName.cs" />
+    <Compile Include="DealersFinderByDmvNumber.cs" />
+    <Compile Include="DealersFinderByPhoneNumber.cs" />
+    <Compile Include="AwgToHoldingTable\SellerDealerIdInserterByPhoneNumber.cs" />
+    <Compile Include="AWGTransactionDTO.cs" />
+    <Compile Include="AwgToHoldingTable\BookSheetTransactionMigrator.cs" />
+    <Compile Include="AwgToHoldingTable\BuyerContactIdInserter.cs" />
+    <Compile Include="HoldingTableToWebInterface\BuyerContactsInserter.cs" />
+    <Compile Include="HoldingTableToWebInterface\BuyerDealersInserterByAddressAndCity.cs" />
+    <Compile Include="HoldingTableToWebInterface\BuyerDealersInserterByCompanyName.cs" />
+    <Compile Include="HoldingTableToWebInterface\BuyerDealersInserterByDmvNumber.cs" />
+    <Compile Include="HoldingTableToWebInterface\BuyerDealersInserterByPhoneNumber.cs" />
+    <Compile Include="HoldingTableToWebInterface\CollectionInserter.cs" />
+    <Compile Include="HoldingTableToWebInterface\ContactCollectionInserter.cs" />
+    <Compile Include="DatabaseFactory.cs" />
+    <Compile Include="AwgToHoldingTable\DataMigrator.cs" />
+    <Compile Include="DealerContactDTO.cs" />
+    <Compile Include="DealerContactsFinder.cs" />
+    <Compile Include="DealerDTO.cs" />
+    <Compile Include="DealersFinder.cs" />
+    <Compile Include="AwgToHoldingTable\Deserializer.cs" />
+    <Compile Include="EntityDAO.cs" />
+    <Compile Include="EntitiesFinder.cs" />
+    <Compile Include="AwgToHoldingTable\IdInserter.cs" />
+    <Compile Include="AwgToHoldingTable\ListEventOperation.cs" />
+    <Compile Include="AwgToHoldingTable\ListInventoryOperation.cs" />
+    <Compile Include="AwgToHoldingTable\ListTransactionOperation.cs" />
+    <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByAddressAndCity.cs" />
+    <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByCompanyName.cs" />
+    <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByPhoneNumber.cs" />
+    <Compile Include="NonEntityDao.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByDmvNumber.cs" />
+    <Compile Include="Settings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AwgToHoldingTable\SoapAction.cs" />
+    <Compile Include="AwgToHoldingTable\SoapOperation.cs" />
+    <Compile Include="AwgToHoldingTable\SoapRequestMessage.cs" />
+    <Compile Include="AwgToHoldingTable\SoapRequestMessageBuilder.cs" />
+    <Compile Include="AwgToHoldingTable\SoapXMLGenerator.cs" />
+    <Compile Include="AwgToHoldingTable\BuyerDealerIdInserterByDmvNumber.cs" />
+    <Compile Include="AwgToHoldingTable\SellerDealerIdInserterByDmvNumber.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

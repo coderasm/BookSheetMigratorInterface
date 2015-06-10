@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Core.Common.EntitySql;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
+using AsyncPoco;
 using BookSheetMigration;
 using Newtonsoft.Json.Linq;
 
@@ -11,10 +14,40 @@ namespace BookSheetMigratorInterface.Controllers
     public class TransactionController : ApiController
     {
         // POST: api/Transaction/import/{
-        [Route("import/{eventId:int}/{transactionId:int}")]
-        public IEnumerable<string> importTransactions(int eventId, int transactionId)
+        [Route("import")]
+        public async Task<object> importTransactions(AWGTransactionDTO transaction)
         {
-            return new string[] { "value1", "value2" };
+            var sql = buildAndReturnImportQuery(transaction);
+            var nonEntityDao = new NonEntityDAO();
+            var result = await nonEntityDao.executeScalar(sql);
+            if (result != 0)
+                await markTransactionAsImported(transaction);
+            return new {success = (result != 0)};
+        }
+
+        [NonAction]
+        private Sql buildAndReturnImportQuery(AWGTransactionDTO transaction)
+        {
+            var sql = Sql.Builder.Append("EXEC Booksheet_Insert_Vehicle @@pVIN = @0", transaction.vin);
+            sql.Append(", @@pSID = @0", transaction.sellerDealerId);
+            sql.Append(", @@pBIID = @0", transaction.buyerDealerId);
+            sql.Append(", @@pCID = @0", transaction.buyerContactId);
+            sql.Append(", @@Year = @0", transaction.year);
+            sql.Append(", @@Make = @0", transaction.make);
+            sql.Append(", @@Model = @0", transaction.model);
+            sql.Append(", @@Miles = @0", transaction.mileage);
+            sql.Append(", @@pBid = @0", transaction.bidAmount);
+            sql.Append(", @@SoldDT = @0", transaction.soldDate);
+            sql.Append(", @@Trans = @0", transaction.transportFee);
+            return sql;
+        }
+
+        [NonAction]
+        private async Task<int> markTransactionAsImported(AWGTransactionDTO transaction)
+        {
+            var entityDao = new EntityDAO<AWGTransactionDTO>();
+            transaction.imported = DateTime.Now;
+            return await entityDao.update(transaction, new List<string>() {"Imported"});
         }
 
         // GET: api/Transaction/imported
@@ -34,10 +67,10 @@ namespace BookSheetMigratorInterface.Controllers
         }
 
         [NonAction]
-        public async Task<List<AWGTransactionDTO>> findUnimportedTransactions()
+        private async Task<List<AWGTransactionDTO>> findUnimportedTransactions()
         {
             var entityDao = new EntityDAO<AWGTransactionDTO>();
-            var transactions = await entityDao.@select("SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE ImportedIntoGsv IS NULL");
+            var transactions = await entityDao.@select("SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL");
             return transactions;
         }
 
