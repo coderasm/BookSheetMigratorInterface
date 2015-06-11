@@ -4,7 +4,7 @@ using BookSheetMigration.AwgToHoldingTable;
 
 namespace BookSheetMigration.HoldingTableToWebInterface
 {
-    public class SellerDealersInserterByPhoneNumber : CollectionInserter<DealerDTO>
+    public class SellerDealersInserterByPhoneNumber : DealerCollectionInserter
     {
         public SellerDealersInserterByPhoneNumber(AWGTransactionDTO transaction)
         {
@@ -36,11 +36,6 @@ namespace BookSheetMigration.HoldingTableToWebInterface
         }
 
         protected override bool insertingBuyersCollection()
-        {
-            return false;
-        }
-
-        protected override bool hasAtLeastOneContact(List<DealerDTO> possibleCollectionOfEntities)
         {
             return false;
         }

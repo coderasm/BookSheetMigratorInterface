@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace BookSheetMigration.AwgToHoldingTable
 {
-    class SellerDealerIdInserterByAddressAndCity : IdInserter<DealerDTO>
+    class SellerDealerIdInserterByAddressAndCity : DealerIdInserter
     {
         public SellerDealerIdInserterByAddressAndCity(AWGTransactionDTO transaction)
         {
@@ -35,11 +35,6 @@ namespace BookSheetMigration.AwgToHoldingTable
         }
 
         protected override bool insertingBuyerDealerId()
-        {
-            return false;
-        }
-
-        protected override bool hasAtLeastOneContact(List<DealerDTO> possibleEntities)
         {
             return false;
         }

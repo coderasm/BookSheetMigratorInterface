@@ -61,7 +61,7 @@ namespace BookSheetMigration
 
         private void setSellerId(AWGTransactionDTO t)
         {
-            IdInserter<DealerDTO> sellerDealerIdInserter = new SellerDealerIdInserterByDmvNumber(t);
+            DealerIdInserter sellerDealerIdInserter = new SellerDealerIdInserterByDmvNumber(t);
             if (insertedDealerUsingDmvNumber(sellerDealerIdInserter))
                 return;
             sellerDealerIdInserter = new SellerDealerIdInserterByPhoneNumber(t);
@@ -77,7 +77,7 @@ namespace BookSheetMigration
 
         private void setBuyerId(AWGTransactionDTO t)
         {
-            IdInserter<DealerDTO> buyerDealerIdInserter = new BuyerDealerIdInserterByDmvNumber(t);
+            DealerIdInserter buyerDealerIdInserter = new BuyerDealerIdInserterByDmvNumber(t);
             if (insertedDealerUsingDmvNumber(buyerDealerIdInserter))
                 return;
             buyerDealerIdInserter = new BuyerDealerIdInserterByPhoneNumber(t);
@@ -91,22 +91,22 @@ namespace BookSheetMigration
                 return;
         }
 
-        private bool insertedDealerUsingDmvNumber(IdInserter<DealerDTO> dealerIdInserter)
+        private bool insertedDealerUsingDmvNumber(DealerIdInserter dealerIdInserter)
         {
             return dealerIdInserter.insertIdIfFound();
         }
 
-        private bool insertedDealerUsingPhoneNumber(IdInserter<DealerDTO> dealerIdInserter)
+        private bool insertedDealerUsingPhoneNumber(DealerIdInserter dealerIdInserter)
         {
             return dealerIdInserter.insertIdIfFound();
         }
 
-        private bool insertedDealerUsingAddressAndCity(IdInserter<DealerDTO> dealerIdInserter)
+        private bool insertedDealerUsingAddressAndCity(DealerIdInserter dealerIdInserter)
         {
             return dealerIdInserter.insertIdIfFound();
         }
 
-        private bool insertedDealerUsingCompanyName(IdInserter<DealerDTO> dealerIdInserter)
+        private bool insertedDealerUsingCompanyName(DealerIdInserter dealerIdInserter)
         {
             return dealerIdInserter.insertIdIfFound();
         }

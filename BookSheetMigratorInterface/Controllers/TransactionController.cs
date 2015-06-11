@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core.Common.EntitySql;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -67,7 +66,7 @@ namespace BookSheetMigratorInterface.Controllers
         }
 
         [NonAction]
-        private async Task<List<AWGTransactionDTO>> findUnimportedTransactions()
+        public async Task<List<AWGTransactionDTO>> findUnimportedTransactions()
         {
             var entityDao = new EntityDAO<AWGTransactionDTO>();
             var transactions = await entityDao.@select("SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL");

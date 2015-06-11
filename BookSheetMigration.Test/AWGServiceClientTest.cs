@@ -10,7 +10,7 @@ namespace BookSheetMigration.Test
         {
             var client = new AWGServiceClient();
             var events = client.findEventsByStatus(EventStatus.InProgress);
-            Assert.AreEqual(1, events.Count);
+            Assert.AreEqual(2, events.Count);
         }
 
         [TestMethod]

@@ -1,181 +1,185 @@
 ﻿<div class="page-header">
     <h1>BookSheet Transaction Migration Service</h1>
 </div>
-<div class=".container-fluid" data-bind="loadingWhen: hasTransactions">
-    <div class="row" data-bind="visible: hasTransactions">
-        <div class="col-md-9">
-            <!--ko paging-control: { viewModel: this, pageIndex: pageIndex, itemCount: itemCount, perPage: perPage }--><!--/ko-->
-        </div>
-        <div class="col-md-3">
-            Filter: <input data-bind="value: filter, valueUpdate: 'afterkeydown'" />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12" data-bind="foreach: {data: page, afterAdd: fadeIn}">
+<div class=".container-fluid" data-bind="loadingWhen: isLoadingTransactions">
+    <div class="row" style="display: none" data-bind="visible: hasTransactions">
+        <div class="col-md-12">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h2 class="panel-title">Transaction <span data-bind="text: transactionId"></span> in event <span data-bind="text: eventId"></span></h2>
-                        </div>
-                        <div class="panel-body">
-                            <form data-bind="submit: importSale">
-                                <input name="year" type="hidden" data-bind="value: year"/>
-                                <input name="make" type="hidden" data-bind="value: make"/>
-                                <input name="model" type="hidden" data-bind="value: model"/>
-                                <input name="mileage" type="hidden" data-bind="value: mileage"/>
-                                <input name="vin" type="hidden" data-bind="value: vin"/>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="sellerDealer">Seller</label>
-                                            <select name="sellerDealerId" id="sellerDealer" class="form-control" data-bind="foreach: sellers, value: sellerDealerId" size="4">
-                                                <option data-bind="text: companyName, value: dealerId"></option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="buyerDealer">Buyer</label>
-                                            <select name="buyerDealerId" id="buyerDealer" class="form-control" data-bind="foreach: buyers, value: buyerDealerId" size="4">
-                                                <option data-bind="text: companyName, value: dealerId"></option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="buyerContact">Buyer Contact</label>
-                                            <select name="buyerContactId" id="buyerContact" class="form-control" data-bind="foreach: buyerContacts, value: buyerContactId" size="4">
-                                                <option data-bind="text: name, value: contactId"></option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <span class="clearfix">Year</span>
-                                        <span data-bind="text: year"></span>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <span class="clearfix">Make</span>
-                                        <span data-bind="text: make"></span>
-                                    </div>
+                <div class="col-md-9">
+                    <!--ko paging-control: { viewModel: this, pageIndex: pageIndex, itemCount: itemCount, perPage: perPage }--><!--/ko-->
+                </div>
+                <div class="col-md-3">
+                    Filter: <input data-bind="value: filter, valueUpdate: 'afterkeydown'" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12" data-bind="foreach: {data: page, afterAdd: fadeIn}">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h2 class="panel-title">Transaction <span data-bind="text: transactionId"></span> in event <span data-bind="text: eventId"></span></h2>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <span class="clearfix">Model</span>
-                                        <span data-bind="text: model"></span>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <span class="clearfix">Mileage</span>
-                                        <span data-bind="text: mileage"></span>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="bidAmount">Bid Amount</label>
-                                            <input name="bidAmount" id="bidAmount" class="form-control" data-bind="value: bidAmount" />
+                                <div class="panel-body">
+                                    <form data-bind="submit: importSale">
+                                        <input name="year" type="hidden" data-bind="value: year" />
+                                        <input name="make" type="hidden" data-bind="value: make" />
+                                        <input name="model" type="hidden" data-bind="value: model" />
+                                        <input name="mileage" type="hidden" data-bind="value: mileage" />
+                                        <input name="vin" type="hidden" data-bind="value: vin" />
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="sellerDealer">Seller</label>
+                                                    <select name="sellerDealerId" id="sellerDealer" class="form-control" data-bind="foreach: sellers, value: sellerDealerId" size="4">
+                                                        <option data-bind="text: companyName, value: dealerId"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="buyerDealer">Buyer</label>
+                                                    <select name="buyerDealerId" id="buyerDealer" class="form-control" data-bind="foreach: buyers, value: buyerDealerId" size="4">
+                                                        <option data-bind="text: companyName, value: dealerId"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="buyerContact">Buyer Contact</label>
+                                                    <select name="buyerContactId" id="buyerContact" class="form-control" data-bind="foreach: buyerContacts, value: buyerContactId" size="4">
+                                                        <option data-bind="text: $parent.contactNameTitle($data), value: contactId"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <span class="clearfix">Year</span>
+                                                <span data-bind="text: year"></span>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <span class="clearfix">Make</span>
+                                                <span data-bind="text: make"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <span class="clearfix">Model</span>
+                                                <span data-bind="text: model"></span>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <span class="clearfix">Mileage</span>
+                                                <span data-bind="text: mileage"></span>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="bidAmount">Bid Amount</label>
+                                                    <input name="bidAmount" id="bidAmount" class="form-control" data-bind="value: bidAmount" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="transportFee">Transport Fee</label>
+                                                    <input name="transportFee" id="transportFee" class="form-control" data-bind="value: transportFee" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <span class="clearfix">VIN</span>
+                                                <span data-bind="text: vin"></span>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="soldDate">Sold Date</label>
+                                                    <input name="soldDate" id="soldDate" type='text' class="form-control" data-bind="datetimepicker: soldDate, datetimepickerOptions: {defaultDate: soldDate()}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="submit" data-bind="enable: importable">Import</button>
+                                                <button data-bind="click: updateSale, enable: isDirty">Update</button>
+                                                <button data-bind="click: clearChanges, enable: isDirty">Clear Changes</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h2 class="panel-title">Seller Information</h2>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <span class="clearfix">Company Name</span>
+                                                    <span data-bind="text: sellerCompanyName"></span>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <span class="clearfix">DMV Number</span>
+                                                    <span data-bind="text: sellerDmvNumber"></span>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <span class="clearfix">Phone Number</span>
+                                                    <span data-bind="text: sellerPhone"></span>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <span class="clearfix">Address</span>
+                                                    <span data-bind="text: sellerAddress"></span>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <span class="clearfix">City</span>
+                                                    <span data-bind="text: sellerCity"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="transportFee">Transport Fee</label>
-                                            <input name="transportFee" id="transportFee" class="form-control" data-bind="value: transportFee" />
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h2 class="panel-title">Buyer Information</h2>
                                         </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <span class="clearfix">VIN</span>
-                                        <span data-bind="text: vin"></span>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <label for="soldDate">Sold Date</label>
-                                            <input name="soldDate" id="soldDate" type='text' class="form-control" data-bind="datetimepicker: soldDate, datetimepickerOptions: {defaultDate: soldDate()}" />
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <span class="clearfix">Company Name</span>
+                                                    <span data-bind="text: buyerCompanyName"></span>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <span class="clearfix">DMV Number</span>
+                                                    <span data-bind="text: buyerDmvNumber"></span>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <span class="clearfix">Phone Number</span>
+                                                    <span data-bind="text: buyerPhone"></span>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <span class="clearfix">Address</span>
+                                                    <span data-bind="text: buyerAddress"></span>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <span class="clearfix">City</span>
+                                                    <span data-bind="text: buyerCity"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <button type="submit" data-bind="enable: importable">Import</button>
-                                        <button data-bind="click: updateSale, enable: isDirty">Update</button>
-                                        <button data-bind="click: clearChanges, enable: isDirty">Clear Changes</button>
-                                    </div>
-                                </div>
-                            </form>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h2 class="panel-title">Seller Information</h2>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <span class="clearfix">Company Name</span>
-                                            <span data-bind="text: sellerCompanyName"></span>
+                                        <div class="alert alert-warning alert-dismissible" role="alert" data-bind="text: error, visible: hasError">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                         </div>
-                                        <div class="col-md-2">
-                                            <span class="clearfix">DMV Number</span>
-                                            <span data-bind="text: sellerDmvNumber"></span>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <span class="clearfix">Phone Number</span>
-                                            <span data-bind="text: sellerPhone"></span>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <span class="clearfix">Address</span>
-                                            <span data-bind="text: sellerAddress"></span>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <span class="clearfix">City</span>
-                                            <span data-bind="text: sellerCity"></span>
+                                        <div class="alert alert-success alert-dismissible" role="alert" data-bind="text: success, visible: hasSuccess">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h2 class="panel-title">Buyer Information</h2>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <span class="clearfix">Company Name</span>
-                                            <span data-bind="text: buyerCompanyName"></span>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <span class="clearfix">DMV Number</span>
-                                            <span data-bind="text: buyerDmvNumber"></span>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <span class="clearfix">Phone Number</span>
-                                            <span data-bind="text: buyerPhone"></span>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <span class="clearfix">Address</span>
-                                            <span data-bind="text: buyerAddress"></span>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <span class="clearfix">City</span>
-                                            <span data-bind="text: buyerCity"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="alert alert-warning alert-dismissible" role="alert" data-bind="text: error, visible: hasError">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                </div>
-                                <div class="alert alert-success alert-dismissible" role="alert" data-bind="text: success, visible: hasSuccess">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12" data-bind="visible: hasTransactions">
-            <!--ko paging-control: { viewModel: this, pageIndex: pageIndex, itemCount: itemCount, perPage: perPage }--><!--/ko-->
+            <div class="row">
+                <div class="col-md-12" data-bind="visible: hasTransactions">
+                    <!--ko paging-control: { viewModel: this, pageIndex: pageIndex, itemCount: itemCount, perPage: perPage }--><!--/ko-->
+                </div>
+            </div>
         </div>
     </div>
 </div>

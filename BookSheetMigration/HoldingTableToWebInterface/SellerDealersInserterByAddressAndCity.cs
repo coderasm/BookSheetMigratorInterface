@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace BookSheetMigration.HoldingTableToWebInterface
 {
-    public class SellerDealersInserterByAddressAndCity : CollectionInserter<DealerDTO>
+    public class SellerDealersInserterByAddressAndCity : DealerCollectionInserter
     {
         public SellerDealersInserterByAddressAndCity(AWGTransactionDTO transaction)
         {
@@ -36,11 +36,6 @@ namespace BookSheetMigration.HoldingTableToWebInterface
         }
 
         protected override bool insertingBuyersCollection()
-        {
-            return false;
-        }
-
-        protected override bool hasAtLeastOneContact(List<DealerDTO> possibleCollectionOfEntities)
         {
             return false;
         }

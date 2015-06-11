@@ -53,6 +53,10 @@
                    return false;
                });
 
+               self.contactNameTitle = function contactNameTitle(contact) {
+                   return contact.name + " - " + contact.title;
+               }
+
                self.clearChanges = function() {
                    revertAllDirtyBack();
                }

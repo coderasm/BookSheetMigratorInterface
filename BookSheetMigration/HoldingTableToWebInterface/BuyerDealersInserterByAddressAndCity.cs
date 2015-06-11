@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace BookSheetMigration.HoldingTableToWebInterface
 {
-    public class BuyerDealersInserterByAddressAndCity : CollectionInserter<DealerDTO>
+    public class BuyerDealersInserterByAddressAndCity : DealerCollectionInserter
     {
         public BuyerDealersInserterByAddressAndCity(AWGTransactionDTO transaction)
         {
@@ -38,12 +38,6 @@ namespace BookSheetMigration.HoldingTableToWebInterface
         protected override bool insertingBuyersCollection()
         {
             return true;
-        }
-
-        protected override bool hasAtLeastOneContact(List<DealerDTO> possibleCollectionOfEntities)
-        {
-            var contactFinder = new DealerContactsFinder(possibleCollectionOfEntities[0].dealerId);
-            return contactFinder.find().Result.Count > 0;
         }
     }
 }

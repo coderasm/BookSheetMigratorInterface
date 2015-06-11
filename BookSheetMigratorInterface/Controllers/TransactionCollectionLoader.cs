@@ -43,7 +43,7 @@ namespace BookSheetMigratorInterface.Controllers
 
         private void setPossibleSellerDealers(AWGTransactionDTO t)
         {
-            CollectionInserter<DealerDTO> sellerDealersInserter = new SellerDealersInserterByDmvNumber(t);
+            DealerCollectionInserter sellerDealersInserter = new SellerDealersInserterByDmvNumber(t);
             if (insertedDealersUsingDmvNumber(sellerDealersInserter))
                 return;
             sellerDealersInserter = new SellerDealersInserterByPhoneNumber(t);
@@ -59,7 +59,7 @@ namespace BookSheetMigratorInterface.Controllers
 
         private void setPossibleBuyerDealers(AWGTransactionDTO t)
         {
-            CollectionInserter<DealerDTO> buyerDealersInserter = new BuyerDealersInserterByDmvNumber(t);
+            DealerCollectionInserter buyerDealersInserter = new BuyerDealersInserterByDmvNumber(t);
             if (insertedDealersUsingDmvNumber(buyerDealersInserter))
                 return;
             buyerDealersInserter = new BuyerDealersInserterByPhoneNumber(t);
@@ -73,22 +73,22 @@ namespace BookSheetMigratorInterface.Controllers
                 return;
         }
 
-        private bool insertedDealersUsingDmvNumber(CollectionInserter<DealerDTO> dealersInserter)
+        private bool insertedDealersUsingDmvNumber(DealerCollectionInserter dealersInserter)
         {
             return dealersInserter.insertCollectionIfFound();
         }
 
-        private bool insertedDealersUsingPhoneNumber(CollectionInserter<DealerDTO> dealersInserter)
+        private bool insertedDealersUsingPhoneNumber(DealerCollectionInserter dealersInserter)
         {
             return dealersInserter.insertCollectionIfFound();
         }
 
-        private bool insertedDealersUsingAddressAndCity(CollectionInserter<DealerDTO> dealersInserter)
+        private bool insertedDealersUsingAddressAndCity(DealerCollectionInserter dealersInserter)
         {
             return dealersInserter.insertCollectionIfFound();
         }
 
-        private bool insertedDealersUsingCompanyName(CollectionInserter<DealerDTO> dealersInserter)
+        private bool insertedDealersUsingCompanyName(DealerCollectionInserter dealersInserter)
         {
             return dealersInserter.insertCollectionIfFound();
         }

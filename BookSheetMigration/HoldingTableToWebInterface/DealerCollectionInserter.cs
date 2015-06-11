@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace BookSheetMigration
 {
-    public abstract class CollectionInserter<T>
+    public abstract class DealerCollectionInserter
     {
         protected AWGTransactionDTO transaction;
 
@@ -26,38 +26,31 @@ namespace BookSheetMigration
             var possibleCollectionOfEntities = findEntities(entityArguments).Result;
             if (foundAtLeastOneEntityIn(possibleCollectionOfEntities))
             {
-                if (foundMorethanOneEntityIn(possibleCollectionOfEntities))
-                {
-                    setPossibleCollection(possibleCollectionOfEntities);
-                    return true;
-                }
-                if (insertingBuyersCollection())
-                {
-                    if (!hasAtLeastOneContact(possibleCollectionOfEntities))
-                        return false;
-                }
                 setPossibleCollection(possibleCollectionOfEntities);
                 return true;
             }
             return false;
         }
 
-        protected abstract Task<List<T>> findEntities(params object[] entityArguments);
+        protected abstract Task<List<DealerDTO>> findEntities(params object[] entityArguments);
 
-        private bool foundAtLeastOneEntityIn(List<T> items)
+        private bool foundAtLeastOneEntityIn(List<DealerDTO> dealers)
         {
-            return items.Count > 0;
+            if (insertingBuyersCollection())
+            {
+                dealers.RemoveAll(hasNoContacts);
+            }
+            return dealers.Count > 0;
         }
-
-        private bool foundMorethanOneEntityIn(List<T> possibleCollectionOfEntities)
-        {
-            return possibleCollectionOfEntities.Count > 1;
-        }
-
-        protected abstract void setPossibleCollection(List<T> entity);
 
         protected abstract bool insertingBuyersCollection();
 
-        protected abstract bool hasAtLeastOneContact(List<T> possibleCollectionOfEntities);
+        private bool hasNoContacts(DealerDTO dealer)
+        {
+            var contactFinder = new DealerContactsFinder(dealer.dealerId);
+            return contactFinder.find().Result.Count == 0;
+        }
+
+        protected abstract void setPossibleCollection(List<DealerDTO> entity);
     }
 }

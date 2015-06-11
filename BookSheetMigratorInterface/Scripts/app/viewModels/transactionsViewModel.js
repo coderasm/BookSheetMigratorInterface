@@ -18,7 +18,8 @@
                         return self.transactions();
                     } else {
                         return ko.utils.arrayFilter(self.transactions(), function(item) {
-                            return item.sellerCompanyName.toLowerCase().startsWith(filter) ||
+                            return item.vin.toLowerCase().startsWith(filter) ||
+                                   item.sellerCompanyName.toLowerCase().startsWith(filter) ||
                                    item.sellerDmvNumber.toLowerCase().startsWith(filter) ||
                                    item.sellerPhone.toLowerCase().startsWith(filter) ||
                                    item.sellerAddress.toLowerCase().startsWith(filter) ||
@@ -31,6 +32,7 @@
                         });
                     }
                 });
+                self.isLoadingTransactions = ko.observable(true);
                 self.itemCount = ko.computed(function() { 
                     return self.transactions().length;
                 }),
@@ -74,12 +76,23 @@
 
                 }
 
-                function getAllTransactions() {
-                    ajaxHelper(transactionUri + "unimported", 'GET').done(function (data) {
-                        var mappedTransactions = $.map(data, function (item) {
-                            return new Transaction(item, transactionUri);
-                        });
-                        self.transactions(mappedTransactions);
+                function getAllTransactions(payload) {
+                    self.error('');
+                    return $.ajax({
+                        type: 'GET',
+                        url: transactionUri + "unimported",
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: payload ? JSON.stringify(payload) : null,
+                        success: function(data) {
+                            var mappedTransactions = $.map(data, function (item) {
+                                return new Transaction(item, transactionUri);
+                            });
+                            self.isLoadingTransactions(false);
+                            self.transactions(mappedTransactions);
+                        }
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        self.error(errorThrown);
                     });
                 }
 

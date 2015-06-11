@@ -4,7 +4,7 @@ using BookSheetMigration.AwgToHoldingTable;
 
 namespace BookSheetMigration
 {
-    public class BuyerDealersInserterByDmvNumber : CollectionInserter<DealerDTO>
+    public class BuyerDealersInserterByDmvNumber : DealerCollectionInserter
     {
         public BuyerDealersInserterByDmvNumber(AWGTransactionDTO transaction)
         {
@@ -38,12 +38,6 @@ namespace BookSheetMigration
         protected override bool insertingBuyersCollection()
         {
             return true;
-        }
-
-        protected override bool hasAtLeastOneContact(List<DealerDTO> possibleCollectionOfEntities)
-        {
-            var contactFinder = new DealerContactsFinder(possibleCollectionOfEntities[0].dealerId);
-            return contactFinder.find().Result.Count > 0;
         }
     }
 }
