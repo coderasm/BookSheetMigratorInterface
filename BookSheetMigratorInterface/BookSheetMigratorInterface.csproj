@@ -237,12 +237,16 @@
     <Content Include="Scripts\app\bindings\dateTimePicker.js" />
     <Content Include="Scripts\app\bindings\isLoadingWhen.js" />
     <Content Include="Scripts\app\bindings\pagination.js" />
+    <Content Include="Scripts\app\bindings\validationPopover.js" />
+    <Content Include="Scripts\app\configurations\validation.js" />
     <Content Include="Scripts\app\extenders\changeTracking.js" />
     <Content Include="Scripts\app\common\pausableComputed.js" />
     <Content Include="Scripts\app\utilities\utilities.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Scripts\domReady.js" />
+    <Content Include="Scripts\knockout.validation.js" />
+    <Content Include="Scripts\knockout.validation.min.js" />
     <Content Include="Scripts\main.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
     <Content Include="Areas\HelpPage\Views\Shared\_Layout.cshtml" />
@@ -313,6 +317,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Scripts\underscore.min.map" />
+    <Content Include="Scripts\knockout.validation.min.js.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

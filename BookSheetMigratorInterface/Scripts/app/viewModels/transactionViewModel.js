@@ -1,13 +1,18 @@
 ﻿define([
         'knockout', 'app/bindings/dateTimePicker', 'app/utilities/utilities',
-        'app/extenders/changeTracking'
+        'app/extenders/changeTracking', 'kovalidation', 'app/configurations/validation'
 ],
        function (ko) {
            return function Transaction(data, transactionUri) {
                var self = this;
                self.eventId = data.eventId;
                self.transactionId = data.transactionId;
-               self.bidAmount = ko.observable(data.bidAmount).extend({trackChange: true});
+               self.bidAmount = ko.observable(data.bidAmount).extend({
+                   trackChange: true,
+                   required: true,
+                   min: 1000,
+                   message: "Must be >= 1000"
+               });
                self.soldDate = ko.observable(data.soldDate).extend({ trackChange: true });
                self.sellerDmvNumber = data.sellerDmvNumber;
                self.sellerDealerId = ko.observable(data.sellerDealerId).extend({ trackChange: true });
@@ -22,7 +27,12 @@
                self.buyerPhone = data.buyerPhone;
                self.buyerAddress = data.buyerAddress;
                self.buyerCity = data.buyerCity;
-               self.transportFee = ko.observable(data.transportFee).extend({ trackChange: true });
+               self.transportFee = ko.observable(data.transportFee).extend({
+                   trackChange: true,
+                   required: true,
+                   min: 0,
+                   message: "Must be >= 0"
+               });
                self.mileage = data.mileage;
                self.make = data.make;
                self.model = data.model;
@@ -72,10 +82,23 @@
 
                self.importable = ko.computed(function () {
                    return self.sellerDealerId() != null && self.buyerDealerId() != null && self.buyerContactId() != null
-                       && self.bidAmount() > 1000 && self.transportFee() >= 0 && !self.isDirty();
+                       && self.bidAmount() >= 1000 && self.transportFee() >= 0 && !self.isDirty();
+               });
+
+               self.updateable = ko.computed(function() {
+                   return self.bidAmount() >= 1000 && self.transportFee() >= 0;
                });
 
                self.updateSale = function () {
+                   self.error("");
+                   if (!self.isDirty()) {
+                       self.error("Nothing to update.");
+                       return;
+                   }
+                   else if (!self.updateable()) {
+                       self.error("Fix your errors.");
+                       return;
+                   }
                    var postData = {
                        sellerDealerId: self.sellerDealerId(),
                        buyerDealerId: self.buyerDealerId(),

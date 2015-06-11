@@ -18,7 +18,7 @@ namespace BookSheetMigratorInterface.Tests
         public void WhenAskingForUnimportedEvents_ANonZeroAmountIsReturned()
         {
             var unimportedTransactions = controller.findUnimportedTransactions().Result;
-            Assert.AreEqual(62, unimportedTransactions.Count);
+            Assert.AreEqual(50, unimportedTransactions.Count);
         }
 
         [TestMethod]

@@ -9,7 +9,7 @@
                     <!--ko paging-control: { viewModel: this, pageIndex: pageIndex, itemCount: itemCount, perPage: perPage }--><!--/ko-->
                 </div>
                 <div class="col-md-3">
-                    Filter: <input data-bind="value: filter, valueUpdate: 'afterkeydown'" />
+                    Filter: <input data-bind="value: filter, valueUpdate: 'afterkeydown'"/>
                 </div>
             </div>
             <div class="row">
@@ -21,16 +21,16 @@
                                     <h2 class="panel-title">Transaction <span data-bind="text: transactionId"></span> in event <span data-bind="text: eventId"></span></h2>
                                 </div>
                                 <div class="panel-body">
-                                    <form data-bind="submit: importSale">
-                                        <input name="year" type="hidden" data-bind="value: year" />
-                                        <input name="make" type="hidden" data-bind="value: make" />
-                                        <input name="model" type="hidden" data-bind="value: model" />
-                                        <input name="mileage" type="hidden" data-bind="value: mileage" />
-                                        <input name="vin" type="hidden" data-bind="value: vin" />
+                                    <form data-bind="submit: importSale" role="form">
+                                        <input name="year" type="hidden" data-bind="value: year"/>
+                                        <input name="make" type="hidden" data-bind="value: make"/>
+                                        <input name="model" type="hidden" data-bind="value: model"/>
+                                        <input name="mileage" type="hidden" data-bind="value: mileage"/>
+                                        <input name="vin" type="hidden" data-bind="value: vin"/>
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="sellerDealer">Seller</label>
+                                                    <label for="sellerDealer" class="control-label">Seller</label>
                                                     <select name="sellerDealerId" id="sellerDealer" class="form-control" data-bind="foreach: sellers, value: sellerDealerId" size="4">
                                                         <option data-bind="text: companyName, value: dealerId"></option>
                                                     </select>
@@ -38,7 +38,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="buyerDealer">Buyer</label>
+                                                    <label for="buyerDealer" class="control-label">Buyer</label>
                                                     <select name="buyerDealerId" id="buyerDealer" class="form-control" data-bind="foreach: buyers, value: buyerDealerId" size="4">
                                                         <option data-bind="text: companyName, value: dealerId"></option>
                                                     </select>
@@ -46,7 +46,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="buyerContact">Buyer Contact</label>
+                                                    <label for="buyerContact" class="control-label">Buyer Contact</label>
                                                     <select name="buyerContactId" id="buyerContact" class="form-control" data-bind="foreach: buyerContacts, value: buyerContactId" size="4">
                                                         <option data-bind="text: $parent.contactNameTitle($data), value: contactId"></option>
                                                     </select>
@@ -71,15 +71,15 @@
                                                 <span data-bind="text: mileage"></span>
                                             </div>
                                             <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <label for="bidAmount">Bid Amount</label>
-                                                    <input name="bidAmount" id="bidAmount" class="form-control" data-bind="value: bidAmount" />
+                                                <div class="form-group" data-bind="validationElement: bidAmount">
+                                                    <label for="bidAmount" class="control-label">Bid Amount</label>
+                                                    <input type="number" name="bidAmount" id="bidAmount" rel="validatePopover" data-position="right" class="form-control" data-bind="value: bidAmount, validationPopUp: bidAmount" />
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <label for="transportFee">Transport Fee</label>
-                                                    <input name="transportFee" id="transportFee" class="form-control" data-bind="value: transportFee" />
+                                                <div class="form-group" data-bind="validationElement: transportFee">
+                                                    <label for="transportFee" class="control-label">Transport Fee</label>
+                                                    <input type="number" name="transportFee" id="transportFee" rel="validatePopover" data-position="right" class="form-control" data-bind="value: transportFee, validationPopUp: transportFee" />
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
@@ -88,16 +88,26 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="soldDate">Sold Date</label>
-                                                    <input name="soldDate" id="soldDate" type='text' class="form-control" data-bind="datetimepicker: soldDate, datetimepickerOptions: {defaultDate: soldDate()}" />
+                                                    <label for="soldDate" class="control-label">Sold Date</label>
+                                                    <input name="soldDate" id="soldDate" type='text' class="form-control" data-bind="datetimepicker: soldDate, datetimepickerOptions: {defaultDate: soldDate()}"/>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <button type="submit" data-bind="enable: importable">Import</button>
-                                                <button data-bind="click: updateSale, enable: isDirty">Update</button>
+                                                <button data-bind="click: updateSale">Update</button>
                                                 <button data-bind="click: clearChanges, enable: isDirty">Clear Changes</button>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="alert alert-warning alert-dismissible" role="alert" data-bind="text: error, visible: hasError">
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                </div>
+                                                <div class="alert alert-success alert-dismissible" role="alert" data-bind="text: success, visible: hasSuccess">
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                </div>
                                             </div>
                                         </div>
                                     </form>
@@ -160,16 +170,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="alert alert-warning alert-dismissible" role="alert" data-bind="text: error, visible: hasError">
-                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        </div>
-                                        <div class="alert alert-success alert-dismissible" role="alert" data-bind="text: success, visible: hasSuccess">
-                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -183,6 +183,7 @@
         </div>
     </div>
 </div>
+
 <script id="paging-control" type="text/html">
     <ul class="pagination">
         <li data-bind="css: { disabled: atFirstPage }">
