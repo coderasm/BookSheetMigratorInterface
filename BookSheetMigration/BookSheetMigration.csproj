@@ -66,6 +66,7 @@
     <Compile Include="AwgToHoldingTable\ContactIdInserter.cs" />
     <Compile Include="AwgToHoldingTable\SellerDealerIdInserterByAddressAndCity.cs" />
     <Compile Include="AwgToHoldingTable\SellerDealerIdInserterByCompanyName.cs" />
+    <Compile Include="DatabaseFactory.cs" />
     <Compile Include="DealersFinderByAddressAndCity.cs" />
     <Compile Include="DealersFinderByCompanyName.cs" />
     <Compile Include="DealersFinderByDmvNumber.cs" />
@@ -81,7 +82,6 @@
     <Compile Include="HoldingTableToWebInterface\BuyerDealersInserterByPhoneNumber.cs" />
     <Compile Include="HoldingTableToWebInterface\DealerCollectionInserter.cs" />
     <Compile Include="HoldingTableToWebInterface\ContactCollectionInserter.cs" />
-    <Compile Include="DatabaseFactory.cs" />
     <Compile Include="AwgToHoldingTable\DataMigrator.cs" />
     <Compile Include="DealerContactDTO.cs" />
     <Compile Include="DealerContactsFinder.cs" />
@@ -97,7 +97,9 @@
     <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByAddressAndCity.cs" />
     <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByCompanyName.cs" />
     <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByPhoneNumber.cs" />
-    <Compile Include="NonEntityDao.cs" />
+    <Compile Include="HoldingTableToWebInterface\TransactionCollectionLoader.cs" />
+    <Compile Include="HoldingTableToWebInterface\TransactionDAO.cs" />
+    <Compile Include="NonEntityDAO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByDmvNumber.cs" />
     <Compile Include="Settings.cs">

@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using BookSheetMigration;
-using BookSheetMigration.HoldingTableToWebInterface;
 
-namespace BookSheetMigratorInterface.Controllers
+namespace BookSheetMigration.HoldingTableToWebInterface
 {
     public class TransactionCollectionLoader
     {

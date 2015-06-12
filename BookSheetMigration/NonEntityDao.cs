@@ -5,21 +5,25 @@ namespace BookSheetMigration
 {
     public class NonEntityDAO
     {
-        private readonly Database databaseConnection;
-
-        public NonEntityDAO()
+        private Database createConnection()
         {
-            databaseConnection = DatabaseFactory.makeDatabase();
+            return DatabaseFactory.makeDatabase();
         }
 
         public async Task<int> executeScalar(Sql sql)
         {
-            return await databaseConnection.ExecuteScalarAsync<int>(sql);
+            using (var databaseConnection = createConnection())
+            {
+                return await databaseConnection.ExecuteScalarAsync<int>(sql);
+            }
         }
 
         public async Task<int> executeScalar(string sql, params object[] sqlparams)
         {
-            return await databaseConnection.ExecuteScalarAsync<int>(sql, sqlparams);
+            using (var databaseConnection = createConnection())
+            {
+                return await databaseConnection.ExecuteScalarAsync<int>(sql, sqlparams);
+            }
         }
     }
 }

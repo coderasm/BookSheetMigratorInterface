@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
-using AsyncPoco;
 using BookSheetMigration;
+using BookSheetMigration.HoldingTableToWebInterface;
 using Newtonsoft.Json.Linq;
 
 namespace BookSheetMigratorInterface.Controllers
@@ -12,73 +10,91 @@ namespace BookSheetMigratorInterface.Controllers
     [RoutePrefix("api/Transaction")]
     public class TransactionController : ApiController
     {
-        // POST: api/Transaction/import/{
-        [Route("import")]
-        public async Task<object> importTransactions(AWGTransactionDTO transaction)
+        // GET: api/Transaction
+        [Route("")]
+        public async Task<IEnumerable<AWGTransactionDTO>> Get()
         {
-            var sql = buildAndReturnImportQuery(transaction);
-            var nonEntityDao = new NonEntityDAO();
-            var result = await nonEntityDao.executeScalar(sql);
-            if (result != 0)
-                await markTransactionAsImported(transaction);
-            return new {success = (result != 0)};
+            var transactionDao = new TransactionDAO();
+            return await transactionDao.getAll();
         }
 
-        [NonAction]
-        private Sql buildAndReturnImportQuery(AWGTransactionDTO transaction)
+        // GET: api/Transaction/eventId/transactionId
+        [Route("{eventId:int}/{transactionId:int}")]
+        public async Task<IEnumerable<AWGTransactionDTO>> Get(int eventId, int transactionId)
         {
-            var sql = Sql.Builder.Append("EXEC Booksheet_Insert_Vehicle @@pVIN = @0", transaction.vin);
-            sql.Append(", @@pSID = @0", transaction.sellerDealerId);
-            sql.Append(", @@pBIID = @0", transaction.buyerDealerId);
-            sql.Append(", @@pCID = @0", transaction.buyerContactId);
-            sql.Append(", @@Year = @0", transaction.year);
-            sql.Append(", @@Make = @0", transaction.make);
-            sql.Append(", @@Model = @0", transaction.model);
-            sql.Append(", @@Miles = @0", transaction.mileage);
-            sql.Append(", @@pBid = @0", transaction.bidAmount);
-            sql.Append(", @@SoldDT = @0", transaction.soldDate);
-            sql.Append(", @@Trans = @0", transaction.transportFee);
-            return sql;
+            var transactionDao = new TransactionDAO();
+            return await transactionDao.get(eventId, transactionId);
         }
 
-        [NonAction]
-        private async Task<int> markTransactionAsImported(AWGTransactionDTO transaction)
+        // POST: api/Transaction/import/eventId/transactionId
+        [Route("import/{eventId:int}/{transactionId:int}")]
+        public async Task<object> PostImport(int eventId, int transactionId)
         {
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
-            transaction.imported = DateTime.Now;
-            return await entityDao.update(transaction, new List<string>() {"Imported"});
+            var transactionDao = new TransactionDAO();
+            var result = await transactionDao.import(eventId, transactionId);
+            return new { success = (result != 0) };
         }
 
         // GET: api/Transaction/imported
         [Route("imported")]
-        public IEnumerable<string> GetImported()
+        public async Task<IEnumerable<AWGTransactionDTO>> Getimported()
         {
-            return new string[] { "value1", "value2" };
+            var transactionDao = new TransactionDAO();
+            return await transactionDao.getImported();
+        }
+
+        // GET: api/Transaction/imported/eventId/transactionId
+        [Route("imported/{eventId:int}/{transactionId:int}")]
+        public async Task<IEnumerable<AWGTransactionDTO>> Getimported(int eventId, int transactionId)
+        {
+            var transactionDao = new TransactionDAO();
+            return await transactionDao.getImported(eventId, transactionId);
         }
 
         // GET: api/Transaction/unimported
         [Route("unimported")]
         public async Task<IEnumerable<AWGTransactionDTO>> GetUnimported()
         {
-            var transactions = await findUnimportedTransactions();
-            await attachDealersAndContactsTo(transactions);
-            return transactions;
+            await migrate();
+            var transactionDao = new TransactionDAO();
+            return await transactionDao.getUnimported();
+        }
+
+        // GET: api/Transaction/unimported/eventId/transactionId
+        [Route("unimported/{eventId:int}/{transactionId:int}")]
+        public async Task<IEnumerable<AWGTransactionDTO>> GetUnimported(int eventId, int transactionId)
+        {
+            await migrate();
+            var transactionDao = new TransactionDAO();
+            return await transactionDao.getUnimported(eventId, transactionId);
         }
 
         [NonAction]
-        public async Task<List<AWGTransactionDTO>> findUnimportedTransactions()
+        private async Task migrate()
         {
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
-            var transactions = await entityDao.@select("SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL");
-            return transactions;
+                await migrateEvents();
+                await migrateTransactions();
         }
 
         [NonAction]
-        private Task attachDealersAndContactsTo(List<AWGTransactionDTO> transactions)
+        private Task migrateEvents()
         {
-            return Task.Run(() => {
-                var transactionCollectionLoader = new TransactionCollectionLoader(transactions);
-                transactionCollectionLoader.loadDependentCollections();
+            return Task.Run(() =>
+            {
+                DataMigrator<AWGEventDTO> upcomingEventMigrator = new BookSheetEventMigrator(EventStatus.Upcoming);
+                upcomingEventMigrator.migrate();
+                DataMigrator<AWGEventDTO> inprogressEventMigrator = new BookSheetEventMigrator(EventStatus.InProgress);
+                inprogressEventMigrator.migrate();
+            });
+        }
+
+        [NonAction]
+        private Task migrateTransactions()
+        {
+            return Task.Run(() =>
+            {
+                DataMigrator<AWGTransactionDTO> transactionMigrator = new BookSheetTransactionMigrator();
+                transactionMigrator.migrate();
             });
         }
 
@@ -86,39 +102,34 @@ namespace BookSheetMigratorInterface.Controllers
         [Route("update")]
         public async Task<object> PostUpdate(JToken json)
         {
-            var jsonkeys = extractKeys(json.Value<JObject>());
-            var transaction = json.ToObject<AWGTransactionDTO>();
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
-            var result = await entityDao.update(transaction, jsonkeys);
+            var transactionDao = new TransactionDAO();
+            var result = await transactionDao.update(json);
             return new {success=(result != 0)};
         }
 
-        private List<string> extractKeys(JObject jObject)
+        // POST: api/Transaction/update/eventId/transactionId
+        [Route("update/{eventId:int}/{transactionId:int}")]
+        public async Task<object> PostUpdate(int eventId, int transactionId, [FromBody]JToken json)
         {
-            return jObject.Properties().Select(p => p.Name).ToList();
-        }
-
-        // GET: api/Transaction/5
-        [System.Web.Http.Route("")]
-        public string Get(int id)
-        {
-            return "value";
+            var transactionDao = new TransactionDAO();
+            var result = await transactionDao.update(eventId, transactionId, json);
+            return new { success = (result != 0) };
         }
 
         // POST: api/Transaction
-        [System.Web.Http.Route("")]
+        [Route("")]
         public void Post([FromBody]string value)
         {
         }
 
         // PUT: api/Transaction/5
-        [System.Web.Http.Route("")]
+        [Route("")]
         public void Put(int id, [FromBody]string value)
         {
         }
 
         // DELETE: api/Transaction/5
-        [System.Web.Http.Route("")]
+        [Route("")]
         public void Delete(int id)
         {
         }

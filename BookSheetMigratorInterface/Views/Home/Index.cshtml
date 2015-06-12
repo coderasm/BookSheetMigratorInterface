@@ -21,12 +21,9 @@
                                     <h2 class="panel-title">Transaction <span data-bind="text: transactionId"></span> in event <span data-bind="text: eventId"></span></h2>
                                 </div>
                                 <div class="panel-body">
-                                    <form data-bind="submit: importSale" role="form">
-                                        <input name="year" type="hidden" data-bind="value: year"/>
-                                        <input name="make" type="hidden" data-bind="value: make"/>
-                                        <input name="model" type="hidden" data-bind="value: model"/>
-                                        <input name="mileage" type="hidden" data-bind="value: mileage"/>
-                                        <input name="vin" type="hidden" data-bind="value: vin"/>
+                                    <form data-bind="submit: updateSale" role="form">
+                                        <input name="eventId" type="hidden" data-bind="value: eventId"/>
+                                        <input name="transactionId" type="hidden" data-bind="value: transactionId" />
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
@@ -79,7 +76,7 @@
                                             <div class="col-md-2">
                                                 <div class="form-group" data-bind="validationElement: transportFee">
                                                     <label for="transportFee" class="control-label">Transport Fee</label>
-                                                    <input type="number" name="transportFee" id="transportFee" rel="validatePopover" data-position="right" class="form-control" data-bind="value: transportFee, validationPopUp: transportFee" />
+                                                    <input type="number" name="transportFee" id="transportFee" class="form-control" data-bind="value: transportFee" />
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
@@ -95,8 +92,8 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <button type="submit" data-bind="enable: importable">Import</button>
-                                                <button data-bind="click: updateSale">Update</button>
+                                                <button data-bind="click: importSale">Import</button>
+                                                <button type="submit" >Update</button>
                                                 <button data-bind="click: clearChanges, enable: isDirty">Clear Changes</button>
                                             </div>
                                         </div>

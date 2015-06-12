@@ -45,6 +45,7 @@
                    setBuyerContacts();
                    clearBuyerContactId();
                });
+               self.isImported = data.imported != null;
                self.error = ko.observable("");
                self.hasError = ko.computed(function () {
                    return self.error() !== "";
@@ -82,14 +83,14 @@
 
                self.importable = ko.computed(function () {
                    return self.sellerDealerId() != null && self.buyerDealerId() != null && self.buyerContactId() != null
-                       && self.bidAmount() >= 1000 && self.transportFee() >= 0 && !self.isDirty();
+                       && self.bidAmount() >= 1000 && self.transportFee() >= 0;
                });
 
                self.updateable = ko.computed(function() {
                    return self.bidAmount() >= 1000 && self.transportFee() >= 0;
                });
 
-               self.updateSale = function () {
+               self.updateSale = function (formElement) {
                    self.error("");
                    if (!self.isDirty()) {
                        self.error("Nothing to update.");
@@ -99,15 +100,7 @@
                        self.error("Fix your errors.");
                        return;
                    }
-                   var postData = {
-                       sellerDealerId: self.sellerDealerId(),
-                       buyerDealerId: self.buyerDealerId(),
-                       buyerContactId: self.buyerContactId(),
-                       bidAmount: self.bidAmount(),
-                       transportFee: self.transportFee(),
-                       soldDate: self.soldDate()
-                   };
-                   postData = addTransactionIdsTo(postData);
+                   var postData = $(formElement).formToJSON();
                    $.ajax({
                        url: transactionUri + "update",
                        type: "POST",
@@ -124,27 +117,33 @@
                    });
                }
 
-               self.importSale = function (formElement) {
-                   var postData = $(formElement).formToJSON();
-                   postData = addTransactionIdsTo(postData);
+               self.importSale = function () {
+                   self.error("");
+                   if (self.isImported) {
+                       self.error("Already imported.");
+                       return;
+                   }
+                   if (self.isDirty()) {
+                       self.error("Update or clear your changes first.");
+                       return;
+                   }
+                   if (!self.importable()) {
+                       self.error("Fix your errors.");
+                       return;
+                   }
                    $.ajax({
-                       url: transactionUri + "import",
+                       url: transactionUri + "import/" + self.eventId + "/" + self.transactionId,
                        type: "POST",
-                       data: postData,
+                       data: {},
                        dataType: 'json',
                        success: function (result) {
-                           if (result.success)
+                           if (result.success) {
                                self.success("Import Successful");
-                           else
+                               self.isImported = true;
+                           } else
                                self.success("Import Not Successful");
                        }
                    });
-               }
-
-               function addTransactionIdsTo(postData) {
-                   postData.eventId = self.eventId;
-                   postData.transactionId = self.transactionId;
-                   return postData;
                }
 
                function updateAllDirtyToNewValues() {

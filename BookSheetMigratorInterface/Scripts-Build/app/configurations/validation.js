@@ -1,0 +1,1 @@
+define(["knockout","kovalidation"],function(e){e.validation.init({errorElementClass:"has-error",errorMessageClass:"help-block",decorateInputElement:!0})});

@@ -1,0 +1,1 @@
+define(["knockout"],function(e){e.extenders.trackChange=function(t,n){return n&&(t.isDirty=e.observable(!1),t.originalValue=t(),t.subscribe(function(e){t.isDirty(e!=t.originalValue)})),t}});

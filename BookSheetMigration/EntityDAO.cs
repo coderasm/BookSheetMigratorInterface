@@ -6,53 +6,72 @@ namespace BookSheetMigration
 {
     public class EntityDAO<T>
     {
-        private readonly Database databaseConnection;
-
-        public EntityDAO()
+        private Database createConnection()
         {
-            databaseConnection = DatabaseFactory.makeDatabase();
+            return DatabaseFactory.makeDatabase();
         }
 
         public async Task<List<T>> select(Sql sql)
         {
-            return await databaseConnection.FetchAsync<T>(sql);
+            using (var databaseConnection = createConnection())
+            {
+                return await databaseConnection.FetchAsync<T>(sql);
+            }
+            
         }
 
         public async Task<List<T>> select(string sql)
         {
-            return await databaseConnection.FetchAsync<T>(sql);
+            using (var databaseConnection = createConnection())
+            {
+                return await databaseConnection.FetchAsync<T>(sql);
+            }
         }
 
         public async Task<List<T>> select(string sql, params object[] sqlparams)
         {
-            return await databaseConnection.FetchAsync<T>(sql, sqlparams);
+            using (var databaseConnection = createConnection())
+            {
+                return await databaseConnection.FetchAsync<T>(sql, sqlparams);
+            }
         }
 
         public async Task<int> update(T entity)
         {
-            if(await exists(entity))
-                return await databaseConnection.UpdateAsync(entity);
-            return 0;
+            using (var databaseConnection = createConnection())
+            {
+                if (await exists(entity))
+                    return await databaseConnection.UpdateAsync(entity);
+                return 0;
+            }
         }
 
         public async Task<int> update(T entity, IEnumerable<string> columns)
         {
-            if (await exists(entity))
-                return await databaseConnection.UpdateAsync(entity, columns);
-            return 0;
+            using (var databaseConnection = createConnection())
+            {
+                if (await exists(entity))
+                    return await databaseConnection.UpdateAsync(entity, columns);
+                return 0;
+            }
         }
 
         public async Task<object> insert(T entity)
         {
-            if(!await exists(entity))
-                return await databaseConnection.InsertAsync(entity);
-            return 0;
+            using (var databaseConnection = createConnection())
+            {
+                if (!await exists(entity))
+                    return await databaseConnection.InsertAsync(entity);
+                return 0;
+            }
         }
 
         public async Task<bool> exists(T entity)
         {
-
-            return await databaseConnection.ExistsAsync(entity);
+            using (var databaseConnection = createConnection())
+            {
+                return await databaseConnection.ExistsAsync(entity);
+            }
         }
 
         public async Task<object> save(T entity)
