@@ -11,6 +11,12 @@
         };
     }
 
+    if (typeof String.prototype.contains != 'function') {
+        String.prototype.contains = function (str) {
+            return this.indexOf(str) != -1;
+        };
+    }
+
     $.fn.formToJSON = function() {
         var array = this.serializeArray();
         var json = {};

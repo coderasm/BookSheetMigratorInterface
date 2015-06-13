@@ -4,25 +4,25 @@
 <div class=".container-fluid" data-bind="loadingWhen: isLoadingTransactions">
     <div class="row" style="display: none" data-bind="visible: hasTransactions">
         <div class="col-md-12">
-            <div class="row">
-                <div class="col-md-9">
-                    <!--ko paging-control: { viewModel: this, pageIndex: pageIndex, itemCount: itemCount, perPage: perPage }--><!--/ko-->
-                </div>
-                <div class="col-md-3">
-                    Filter: <input data-bind="value: filter, valueUpdate: 'afterkeydown'"/>
-                </div>
-            </div>
+            @{ Html.RenderPartial("_PageFilterSelectUpdateImport");}
             <div class="row">
                 <div class="col-md-12" data-bind="foreach: {data: page, afterAdd: fadeIn}">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h2 class="panel-title">Transaction <span data-bind="text: transactionId"></span> in event <span data-bind="text: eventId"></span></h2>
+                                    <div class="row">
+                                        <div class="col-md-11">
+                                            <h2 class="panel-title">Transaction <span data-bind="text: transactionId"></span> in event <span data-bind="text: eventId"></span></h2>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="checkbox" data-bind="checked: isSelected" />
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="panel-body">
                                     <form data-bind="submit: updateSale" role="form">
-                                        <input name="eventId" type="hidden" data-bind="value: eventId"/>
+                                        <input name="eventId" type="hidden" data-bind="value: eventId" />
                                         <input name="transactionId" type="hidden" data-bind="value: transactionId" />
                                         <div class="row">
                                             <div class="col-md-3">
@@ -86,14 +86,14 @@
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="soldDate" class="control-label">Sold Date</label>
-                                                    <input name="soldDate" id="soldDate" type='text' class="form-control" data-bind="datetimepicker: soldDate, datetimepickerOptions: {defaultDate: soldDate()}"/>
+                                                    <input name="soldDate" id="soldDate" type='text' class="form-control" data-bind="datetimepicker: soldDate, datetimepickerOptions: {defaultDate: soldDate()}" />
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <button data-bind="click: importSale">Import</button>
-                                                <button type="submit" >Update</button>
+                                                <button type="submit">Update</button>
                                                 <button data-bind="click: clearChanges, enable: isDirty">Clear Changes</button>
                                             </div>
                                         </div>
@@ -172,11 +172,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12" data-bind="visible: hasTransactions">
-                    <!--ko paging-control: { viewModel: this, pageIndex: pageIndex, itemCount: itemCount, perPage: perPage }--><!--/ko-->
-                </div>
-            </div>
+            @{ Html.RenderPartial("_PageFilterSelectUpdateImport");}
         </div>
     </div>
 </div>

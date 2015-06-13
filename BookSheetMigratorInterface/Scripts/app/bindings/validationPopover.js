@@ -1,7 +1,7 @@
 /*
 Twitter Bootstrap Popover using a Knockout Custom Binding with KO Validation
 */
-define(['knockout'],
+define(['knockout', 'bootstrap'],
     function(ko) {
         ko.bindingHandlers.validationPopover = {
             init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {

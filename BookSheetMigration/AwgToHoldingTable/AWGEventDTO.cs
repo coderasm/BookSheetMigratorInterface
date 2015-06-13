@@ -12,9 +12,16 @@ namespace BookSheetMigration
         [Column("EventId")]
         public int eventId { get; set; }
 
+        [XmlElement("StartTime")]
+        [Column("StartTime")]
+        public DateTime startTime { get; set; }
+
         [XmlElement("EndTime")]
         [Column("EndTime")]
         public DateTime endTime { get; set; }
+
+        [Column("LastImported")]
+        public DateTime? lastImported { get; set; }
 
         public override bool Equals(object obj)
         {

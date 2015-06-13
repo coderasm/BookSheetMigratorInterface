@@ -1,0 +1,18 @@
+﻿<div class="row">
+    <div class="col-md-7">
+        <!--ko paging-control: { viewModel: this, pageIndex: pageIndex, itemCount: itemCount, perPage: perPage }--><!--/ko-->
+    </div>
+    <div class="col-md-5">
+        <div class="row">
+            <div class="col-md-12">
+                @{ Html.RenderPartial("_Filter");}
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-12">
+                @{ Html.RenderPartial("_SelectUpdateImport");}
+            </div>
+        </div>
+    </div>
+</div>

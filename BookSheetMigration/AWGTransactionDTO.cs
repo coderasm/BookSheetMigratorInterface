@@ -197,6 +197,9 @@ namespace BookSheetMigration
         [Column("Imported")]
         public DateTime? imported { get; set; }
 
+        [Column("FailedImport")]
+        public bool failedImport { get; set; }
+
         public override bool Equals(object obj)
         {
             AWGTransactionDTO transactionDto = obj as AWGTransactionDTO;

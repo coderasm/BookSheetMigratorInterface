@@ -10,10 +10,10 @@
                self.bidAmount = ko.observable(data.bidAmount).extend({
                    trackChange: true,
                    required: true,
-                   min: 1000,
-                   message: "Must be >= 1000"
+                   min: 1000
                });
                self.soldDate = ko.observable(data.soldDate).extend({ trackChange: true });
+               self.failedImport = data.failedImport;
                self.sellerDmvNumber = data.sellerDmvNumber;
                self.sellerDealerId = ko.observable(data.sellerDealerId).extend({ trackChange: true });
                self.sellerCompanyName = data.sellerCompanyName;
@@ -30,8 +30,7 @@
                self.transportFee = ko.observable(data.transportFee).extend({
                    trackChange: true,
                    required: true,
-                   min: 0,
-                   message: "Must be >= 0"
+                   min: 0
                });
                self.mileage = data.mileage;
                self.make = data.make;
@@ -46,6 +45,7 @@
                    clearBuyerContactId();
                });
                self.isImported = data.imported != null;
+               self.isSelected = ko.observable(false);
                self.error = ko.observable("");
                self.hasError = ko.computed(function () {
                    return self.error() !== "";
@@ -55,9 +55,15 @@
                    return self.success() !== "";
                });
 
+               function clearAlerts() {
+                   self.success("");
+                   self.error("");
+               }
+
                self.isDirty = ko.computed(function () {
                    for (key in self) {
-                       if (self.hasOwnProperty(key) && ko.isObservable(self[key]) && typeof self[key].isDirty === 'function' && self[key].isDirty()) {
+                       var member = self[key];
+                       if (self.hasOwnProperty(key) && ko.isObservable(member) && typeof member.isDirty === 'function' && member.isDirty()) {
                            return true;
                        }
                    }
@@ -74,9 +80,10 @@
 
                function revertAllDirtyBack() {
                    for (key in self) {
-                       if (self.hasOwnProperty(key) && ko.isObservable(self[key]) && typeof self[key].isDirty === "function" && self[key].isDirty()) {
-                           self[key](self[key].originalValue);
-                           self[key].isDirty(false);
+                       var member = self[key];
+                       if (self.hasOwnProperty(key) && ko.isObservable(member) && typeof member.isDirty === "function" && member.isDirty()) {
+                           member(member.originalValue);
+                           member.isDirty(false);
                        }
                    }
                }
@@ -91,7 +98,7 @@
                });
 
                self.updateSale = function (formElement) {
-                   self.error("");
+                   clearAlerts();
                    if (!self.isDirty()) {
                        self.error("Nothing to update.");
                        return;
@@ -107,7 +114,6 @@
                        data: postData,
                        dataType: 'json',
                        success: function (result) {
-                           self.error("");
                            if (result.success) {
                                updateAllDirtyToNewValues();
                                self.success("Update Successful");
@@ -118,7 +124,7 @@
                }
 
                self.importSale = function () {
-                   self.error("");
+                   clearAlerts();
                    if (self.isImported) {
                        self.error("Already imported.");
                        return;
@@ -148,9 +154,10 @@
 
                function updateAllDirtyToNewValues() {
                    for (key in self) {
-                       if (self.hasOwnProperty(key) && ko.isObservable(self[key]) && typeof self[key].isDirty === 'function' && self[key].isDirty()) {
-                           self[key].originalValue = self[key]();
-                           self[key].isDirty(false);
+                       var member = self[key];
+                       if (self.hasOwnProperty(key) && ko.isObservable(member) && typeof member.isDirty === 'function' && member.isDirty()) {
+                           member.originalValue = member();
+                           member.isDirty(false);
                        }
                    }
                }

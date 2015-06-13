@@ -7,11 +7,11 @@ namespace BookSheetMigration
     public class BookSheetTransactionMigrator : DataMigrator<AWGTransactionDTO>
     {
         private const string dateFormat = "yyyy-MM-dd HH:mm:ss";
-        private DateTime yesterday = DateTime.Now.AddDays(-1);
+        private DateTime lastDayAnEventIsSearchable = DateTime.Now.AddDays(Settings.daysPastToIncludeEvents);
 
         protected override List<AWGTransactionDTO> findPossiblyNewRecords()
         {
-            var liveEvents = findEventsNotExpiredBy(yesterday);
+            var liveEvents = findEventsNotExpiredBy(lastDayAnEventIsSearchable);
             return findSalesInEvents(liveEvents);
         }
 
@@ -28,7 +28,7 @@ namespace BookSheetMigration
             var allTransactions = new List<AWGTransactionDTO>();
             foreach (var awgEvent in liveEvents)
             {
-                var transactions = serviceClient.findTransactionsByStatusAndId(TransactionStatus.New, awgEvent.eventId);
+                var transactions = serviceClient.findTransactionsByStatusAndDateRange(TransactionStatus.New, awgEvent. awgEvent.eventId);
                 insertIdsIntoTransactions(transactions, awgEvent.eventId);
                 allTransactions.AddRange(transactions);
             }

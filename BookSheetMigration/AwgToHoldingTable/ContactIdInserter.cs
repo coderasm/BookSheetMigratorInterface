@@ -47,10 +47,10 @@ namespace BookSheetMigration.AwgToHoldingTable
 
         private bool ableToSetPossibleEntityByName(List<DealerContactDTO> contacts)
         {
-            var nameIntransaction = removePunctuationAndToLower(getNameInTransaction());
+            var nameInTransaction = removePunctuationAndToLower(getNameInTransaction());
             foreach (var contact in contacts)
             {
-                if (insertByNameMatch(contact, nameIntransaction))
+                if (insertByNameMatch(contact, nameInTransaction))
                     return true;
             }
             return false;

@@ -25,7 +25,7 @@ namespace BookSheetMigration.Test
         public void WhenAskingForTransactionsByEventIdAndStatus_MatchingTransactionsAreReturned()
         {
             var client = new AWGServiceClient();
-            var transactions = client.findTransactionsByStatusAndId(TransactionStatus.New, 122972);
+            var transactions = client.findTransactionsByStatus(TransactionStatus.New, 122972);
             Assert.AreEqual(46, transactions.Count);
         }
     }

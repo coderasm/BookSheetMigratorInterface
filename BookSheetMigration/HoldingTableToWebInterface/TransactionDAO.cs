@@ -92,7 +92,9 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             var nonEntityDao = new NonEntityDAO();
             var result = await nonEntityDao.executeScalar(sql);
             if (result != 0)
-                await markTransactionAsImported(transaction);
+                markTransactionAsImported(transaction);
+            else
+                markTransactionAsFailedImport(transaction);
             return result;
         }
 
@@ -112,11 +114,18 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             return sql;
         }
 
-        private async Task<int> markTransactionAsImported(AWGTransactionDTO transaction)
+        private void markTransactionAsImported(AWGTransactionDTO transaction)
         {
             var entityDao = new EntityDAO<AWGTransactionDTO>();
             transaction.imported = DateTime.Now;
-            return await entityDao.update(transaction, new List<string>() { "Imported" });
+            entityDao.update(transaction, new List<string>() { "Imported" });
+        }
+
+        private void markTransactionAsFailedImport(AWGTransactionDTO transaction)
+        {
+            var entityDao = new EntityDAO<AWGTransactionDTO>();
+            transaction.failedImport = true;
+            entityDao.update(transaction, new List<string>() { "FailedImport" });
         }
 
         public async Task<int> update(JToken json)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace BookSheetMigration
 {
@@ -16,9 +17,15 @@ namespace BookSheetMigration
             return listInventoryOperation.execute().inventory;
         }
 
-        public List<AWGTransactionDTO> findTransactionsByStatusAndId(TransactionStatus transactionStatus, int eventId = 0, string sellingDealerNumber = "", string buyingDealerNumber = "")
+        public List<AWGTransactionDTO> findTransactionsByStatus(TransactionStatus transactionStatus)
         {
-            var listTransactionOperation = new ListTransactionOperation(TransactionStatus.New, eventId, sellingDealerNumber, buyingDealerNumber);
+            var listTransactionOperation = new ListTransactionOperation(TransactionStatus.New);
+            return listTransactionOperation.execute().transactions;
+        }
+
+        public List<AWGTransactionDTO> findTransactionsByStatusAndDateRange(TransactionStatus transactionStatus, DateTime startDateTime, DateTime endDateTime, int eventId)
+        {
+            var listTransactionOperation = new ListTransactionOperation(TransactionStatus.New, startDateTime, endDateTime, eventId);
             return listTransactionOperation.execute().transactions;
         }
     }

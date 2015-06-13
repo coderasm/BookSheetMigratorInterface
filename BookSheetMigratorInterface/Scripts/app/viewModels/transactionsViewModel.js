@@ -18,17 +18,7 @@
                         return self.transactions();
                     } else {
                         return ko.utils.arrayFilter(self.transactions(), function(item) {
-                            return item.vin.toLowerCase().startsWith(filter) ||
-                                   item.sellerCompanyName.toLowerCase().startsWith(filter) ||
-                                   item.sellerDmvNumber.toLowerCase().startsWith(filter) ||
-                                   item.sellerPhone.toLowerCase().startsWith(filter) ||
-                                   item.sellerAddress.toLowerCase().startsWith(filter) ||
-                                   item.sellerCity.toLowerCase().startsWith(filter) ||
-                                   item.buyerCompanyName.toLowerCase().startsWith(filter) ||
-                                   item.buyerDmvNumber.toLowerCase().startsWith(filter) ||
-                                   item.buyerPhone.toLowerCase().startsWith(filter) ||
-                                   item.buyerAddress.toLowerCase().startsWith(filter) ||
-                                   item.buyerCity.toLowerCase().startsWith(filter);
+                            return item.vin.toLowerCase().contains(filter);
                         });
                     }
                 });
@@ -65,10 +55,29 @@
                     });
                 }
 
-                self.importAll = function () {
-                    ko.utils.arrayForEach(self.transactions, function (transaction) {
-                        if (transaction.importable())
-                            transaction.import();
+                self.selectAll = function () {
+                    ko.utils.arrayForEach(self.page(), function (transaction) {
+                        transaction.isSelected(true);
+                    });
+                }
+
+                self.selectNone = function () {
+                    ko.utils.arrayForEach(self.page(), function (transaction) {
+                        transaction.isSelected(false);
+                    });
+                }
+
+                self.importSelected = function () {
+                    ko.utils.arrayForEach(self.transactions(), function (transaction) {
+                        if (transaction.importable() && transaction.isSelected())
+                            transaction.importSale();
+                    });
+                }
+
+                self.updateSelected = function () {
+                    ko.utils.arrayForEach(self.transactions(), function (transaction) {
+                        if (transaction.updateable() && transaction.isSelected())
+                            transaction.updateSale();
                     });
                 }
 
