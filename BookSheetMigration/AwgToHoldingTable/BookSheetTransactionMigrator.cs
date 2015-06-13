@@ -7,7 +7,7 @@ namespace BookSheetMigration
     public class BookSheetTransactionMigrator : DataMigrator<AWGTransactionDTO>
     {
         private const string dateFormat = "yyyy-MM-dd HH:mm:ss";
-        private DateTime lastDayAnEventIsSearchable = DateTime.Now.AddDays(Settings.daysPastToIncludeEvents);
+        private DateTime lastDayAnEventIsSearchable = DateTime.Now.AddDays(Settings.daysBeforeToday);
 
         protected override List<AWGTransactionDTO> findPossiblyNewRecords()
         {
@@ -24,15 +24,35 @@ namespace BookSheetMigration
 
         private List<AWGTransactionDTO> findSalesInEvents(List<AWGEventDTO> liveEvents)
         {
-            var serviceClient = new AWGServiceClient();
             var allTransactions = new List<AWGTransactionDTO>();
             foreach (var awgEvent in liveEvents)
             {
-                var transactions = serviceClient.findTransactionsByStatusAndDateRange(TransactionStatus.New, awgEvent. awgEvent.eventId);
+                var transactions = findTransactionsForEvent(awgEvent);
                 insertIdsIntoTransactions(transactions, awgEvent.eventId);
                 allTransactions.AddRange(transactions);
             }
             return allTransactions;
+        }
+
+        private List<AWGTransactionDTO> findTransactionsForEvent(AWGEventDTO awgEvent)
+        {
+            var serviceClient = new AWGServiceClient();
+            var startDate = findStartDate(awgEvent);
+            var endDate = DateTime.Now;
+            updateLastImportedForEvent(awgEvent, endDate);
+            return serviceClient.findTransactionsByStatusDateRangeAndId(TransactionStatus.New, startDate, endDate, awgEvent.eventId);
+        }
+
+        private DateTime findStartDate(AWGEventDTO awgEvent)
+        {
+            return awgEvent.lastImported == null ? awgEvent.startTime : awgEvent.lastImported.Value.AddMinutes(Settings.minutesBeforeLastImportedDate);
+        }
+
+        private async void updateLastImportedForEvent(AWGEventDTO awgEvent, DateTime endDate)
+        {
+            var eventDao = createEventDao();
+            awgEvent.lastImported = endDate;
+            await eventDao.update(awgEvent, new List<string>(){"LastImported"});
         }
 
         private List<AWGTransactionDTO> insertIdsIntoTransactions(List<AWGTransactionDTO> transactions, int id)

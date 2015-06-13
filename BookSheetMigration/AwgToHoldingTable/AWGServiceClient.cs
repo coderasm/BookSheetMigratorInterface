@@ -23,7 +23,13 @@ namespace BookSheetMigration
             return listTransactionOperation.execute().transactions;
         }
 
-        public List<AWGTransactionDTO> findTransactionsByStatusAndDateRange(TransactionStatus transactionStatus, DateTime startDateTime, DateTime endDateTime, int eventId)
+        public List<AWGTransactionDTO> findTransactionsByStatusAndId(TransactionStatus transactionStatus, int eventId)
+        {
+            var listTransactionOperation = new ListTransactionOperation(TransactionStatus.New, eventId);
+            return listTransactionOperation.execute().transactions;
+        }
+
+        public List<AWGTransactionDTO> findTransactionsByStatusDateRangeAndId(TransactionStatus transactionStatus, DateTime startDateTime, DateTime endDateTime, int eventId)
         {
             var listTransactionOperation = new ListTransactionOperation(TransactionStatus.New, startDateTime, endDateTime, eventId);
             return listTransactionOperation.execute().transactions;
