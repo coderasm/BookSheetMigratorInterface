@@ -1,7 +1,7 @@
 ﻿define([
         'knockout', 'app/viewModels/transactionViewModel',
         'app/bindings/isLoadingWhen', 'app/bindings/pagination',
-        'app/utilities/utilities'
+        'app/utilities/utilities', 'signalr.hubs'
 ],
         function (ko, Transaction) {
             return function transactionsViewModel() {
@@ -81,10 +81,6 @@
                     });
                 }
 
-                self.pullNewAndUpdateExistingTransactions = function () {
-
-                }
-
                 function getAllTransactions(payload) {
                     self.error('');
                     return $.ajax({
@@ -107,5 +103,17 @@
 
                 // Fetch the initial data.
                 getAllTransactions();
+
+                self.newlyAddedTransactions = [];
+                //Wait for any new data.
+                var ticker = $.connection.transactionTicker; // the generated client-side hub proxy
+                ticker.client.consumeNewTransactions = function (transactions) {
+                    var mappedTransactions = $.map(transactions, function (item) {
+                        return new Transaction(item, transactionUri);
+                    });
+                    self.newlyAddedTransactions.push(mappedTransactions);
+                }
+                $.connection.hub.logging = true;
+                $.connection.hub.start();
             }
 });

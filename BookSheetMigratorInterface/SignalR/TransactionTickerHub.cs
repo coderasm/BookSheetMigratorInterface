@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using BookSheetMigration;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 
 namespace BookSheetMigratorInterface.SignalR
 {
+    [HubName("transactionTicker")]
     public class TransactionTickerHub : Hub
     {
         private readonly TransactionTicker _transactionTicker;
 
         public TransactionTickerHub() : this(TransactionTicker.Instance) { }
 
-        public TransactionTickerHub(TransactionTicker TransactionTicker)
+        private TransactionTickerHub(TransactionTicker TransactionTicker)
         {
             _transactionTicker = TransactionTicker;
         }

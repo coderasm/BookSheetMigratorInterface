@@ -70,10 +70,10 @@ namespace BookSheetMigratorInterface.Controllers
         }
 
         [NonAction]
-        public async Task migrate()
+        public async Task<List<AWGTransactionDTO>>  migrate()
         {
                 await migrateEvents();
-                await migrateTransactions();
+                return await migrateTransactions();
         }
 
         [NonAction]
@@ -89,12 +89,12 @@ namespace BookSheetMigratorInterface.Controllers
         }
 
         [NonAction]
-        private Task migrateTransactions()
+        private Task<List<AWGTransactionDTO>>  migrateTransactions()
         {
             return Task.Run(() =>
             {
                 DataMigrator<AWGTransactionDTO> transactionMigrator = new BookSheetTransactionMigrator();
-                transactionMigrator.migrate();
+                return transactionMigrator.migrate();
             });
         }
 
