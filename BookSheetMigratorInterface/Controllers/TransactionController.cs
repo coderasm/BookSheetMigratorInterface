@@ -70,7 +70,7 @@ namespace BookSheetMigratorInterface.Controllers
         }
 
         [NonAction]
-        private async Task migrate()
+        public async Task migrate()
         {
                 await migrateEvents();
                 await migrateTransactions();

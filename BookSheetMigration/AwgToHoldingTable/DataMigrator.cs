@@ -51,9 +51,10 @@ namespace BookSheetMigration
             return entityDao.insert(possiblyNewRecord);
         }
 
-        public void migrate()
+        public List<T> migrate()
         {
             migrateRecords();
+            return possiblyNewRecords;
         }
     }
 }
