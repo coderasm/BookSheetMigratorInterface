@@ -7,7 +7,7 @@ namespace BookSheetMigration
     public class BookSheetTransactionMigrator : DataMigrator<AWGTransactionDTO>
     {
         private const string dateFormat = "yyyy-MM-dd HH:mm:ss";
-        private DateTime lastDayAnEventIsSearchable = DateTime.Now.AddDays(Settings.daysBeforeToday);
+        private DateTime lastDayAnEventIsSearchable = DateTime.Now.AddDays(-Settings.daysBeforeToday);
 
         protected override List<AWGTransactionDTO> findPossiblyNewRecords()
         {
@@ -45,7 +45,7 @@ namespace BookSheetMigration
 
         private DateTime findStartDate(AWGEventDTO awgEvent)
         {
-            return awgEvent.lastMigrated == null ? awgEvent.startTime : awgEvent.lastMigrated.Value.AddMinutes(Settings.minutesBeforeLastMigrationDate);
+            return awgEvent.lastMigrated == null ? awgEvent.startTime : awgEvent.lastMigrated.Value.AddMinutes(-Settings.minutesBeforeLastMigrationDate);
         }
 
         private async void updateLastMigratedForEvent(AWGEventDTO awgEvent, DateTime endDate)
