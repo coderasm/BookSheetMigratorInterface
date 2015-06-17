@@ -59,7 +59,7 @@
                 });
                 self.isLoadingTransactions = ko.observable(true);
                 self.itemCount = ko.computed(function() { 
-                    return self.transactions().length;
+                    return self.filteredTransactions().length;
                 }),
                 self.perPage = ko.observable(10),
                 self.pageIndex = ko.observable(0),
@@ -72,7 +72,7 @@
 
                 self.fadeIn = function (element) {
                     $(element).hide();
-                    $(element).fadeIn(500);
+                    $(element).fadeIn(250);
                 }
 
                 var transactionUri = '/api/Transaction/';
