@@ -45,7 +45,7 @@ namespace BookSheetMigration
 
         private DateTime findStartDate(AWGEventDTO awgEvent)
         {
-            return awgEvent.lastMigrated == null ? awgEvent.startTime : awgEvent.lastMigrated.Value.AddMinutes(-Settings.minutesBeforeLastMigrationDate);
+            return awgEvent.lastMigrated == null ? awgEvent.startTime : awgEvent.lastMigrated.Value;
         }
 
         private async void updateLastMigratedForEvent(AWGEventDTO awgEvent, DateTime endDate)
