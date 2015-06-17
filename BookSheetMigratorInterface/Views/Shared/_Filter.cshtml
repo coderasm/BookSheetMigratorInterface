@@ -4,7 +4,7 @@
     </div>
     <div class="col-md-6">
         <button class="btn btn-primary" data-bind="visible: hasNew, click: toggleShowOnlyNew" type="button">
-            New <span class="badge" data-bind="text: newCount"></span>
+            <span data-bind="text: filterTypeText">New</span> <span class="badge" data-bind="text: filterTypeCount"></span>
         </button>
     </div>
 </div>

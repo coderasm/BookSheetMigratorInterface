@@ -15,23 +15,19 @@
                 self.showOnlyNew = ko.observable(false);
                 self.filteredTransactions = ko.computed(function() {
                     var filter = self.filter().toLowerCase();
-                    var filteredTransactions = [];
                     if (!filter && !self.showOnlyNew()) {
                         return self.transactions();
                     } else {
+                        var filteredTransactions = self.transactions();
                         if (self.showOnlyNew()) {
-                            filteredTransactions = filteredTransactions.concat(
-                                                        ko.utils.arrayFilter(self.transactions(), function (item) {
-                                                            return item.newlyAdded();
-                                                        })
-                                                    );
+                            filteredTransactions = ko.utils.arrayFilter(filteredTransactions, function(item) {
+                                                        return item.newlyAdded();
+                                                    });
                         }
                         if (filter) {
-                            filteredTransactions = filteredTransactions.concat(
-                                                        ko.utils.arrayFilter(self.transactions(), function (item) {
-                                                            return item.vin.toLowerCase().contains(filter);
-                                                        })
-                                                   );
+                            filteredTransactions = ko.utils.arrayFilter(filteredTransactions, function(item) {
+                                                        return item.vin.toLowerCase().contains(filter);
+                                                    });
                         }
                         return filteredTransactions;
                     }
@@ -45,6 +41,18 @@
                         return transaction.newlyAdded();
                     });
                     return newTransactions.length;
+                });
+                self.filterTypeCount = ko.computed(function () {
+                    if (!self.showOnlyNew()) {
+                        return self.newCount();
+                    } else
+                        return self.transactions().length;
+                });
+                self.filterTypeText = ko.computed(function() {
+                    if (!self.showOnlyNew())
+                        return "New";
+                    else
+                        return "All";
                 });
                 self.hasNew = ko.computed(function() {
                     return self.newCount() > 0;
