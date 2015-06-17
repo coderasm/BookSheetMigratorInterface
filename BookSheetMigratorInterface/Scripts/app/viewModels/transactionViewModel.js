@@ -44,6 +44,7 @@
                    setBuyerContacts();
                    clearBuyerContactId();
                });
+               self.newlyAdded = ko.observable(false);
                self.isImported = data.imported != null;
                self.isSelected = ko.observable(false);
                self.error = ko.observable("");

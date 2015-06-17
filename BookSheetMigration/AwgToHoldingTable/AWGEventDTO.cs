@@ -20,8 +20,8 @@ namespace BookSheetMigration
         [Column("EndTime")]
         public DateTime endTime { get; set; }
 
-        [Column("LastImported")]
-        public DateTime? lastImported { get; set; }
+        [Column("LastMigrated")]
+        public DateTime? lastMigrated { get; set; }
 
         public override bool Equals(object obj)
         {

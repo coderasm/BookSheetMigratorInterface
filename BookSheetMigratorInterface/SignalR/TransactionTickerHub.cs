@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using BookSheetMigration;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 
@@ -7,13 +9,18 @@ namespace BookSheetMigratorInterface.SignalR
     [HubName("transactionTicker")]
     public class TransactionTickerHub : Hub
     {
-        private readonly TransactionTicker _transactionTicker;
+        private readonly TransactionTicker transactionTicker;
 
         public TransactionTickerHub() : this(TransactionTicker.Instance) { }
 
         private TransactionTickerHub(TransactionTicker TransactionTicker)
         {
-            _transactionTicker = TransactionTicker;
+            transactionTicker = TransactionTicker;
+        }
+
+        public async Task<IEnumerable<AWGTransactionDTO>> GetUnimported()
+        {
+            return await transactionTicker.getUnimported(Context.ConnectionId);
         }
 
         public override Task OnConnected()

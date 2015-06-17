@@ -16,6 +16,7 @@ bootstrap.js
 respond.js
 app/bindings/isLoadingWhen.js
 app/bindings/pagination.js
+jquery.signalR-2.2.0.js
 app/viewModels/transactionsViewModel.js
 domReady.js
 domReady!

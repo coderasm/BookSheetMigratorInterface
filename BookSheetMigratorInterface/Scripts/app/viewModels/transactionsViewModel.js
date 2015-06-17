@@ -12,15 +12,42 @@
                     return self.transactions().length > 0;
                 });
                 self.filter = ko.observable("");
+                self.showOnlyNew = ko.observable(false);
                 self.filteredTransactions = ko.computed(function() {
                     var filter = self.filter().toLowerCase();
-                    if (!filter) {
+                    var filteredTransactions = [];
+                    if (!filter && !self.showOnlyNew()) {
                         return self.transactions();
                     } else {
-                        return ko.utils.arrayFilter(self.transactions(), function(item) {
-                            return item.vin.toLowerCase().contains(filter);
-                        });
+                        if (self.showOnlyNew()) {
+                            filteredTransactions = filteredTransactions.concat(
+                                                        ko.utils.arrayFilter(self.transactions(), function (item) {
+                                                            return item.newlyAdded();
+                                                        })
+                                                    );
+                        }
+                        if (filter) {
+                            filteredTransactions = filteredTransactions.concat(
+                                                        ko.utils.arrayFilter(self.transactions(), function (item) {
+                                                            return item.vin.toLowerCase().contains(filter);
+                                                        })
+                                                   );
+                        }
+                        return filteredTransactions;
                     }
+                });
+                self.toggleShowOnlyNew = function() {
+                    self.showOnlyNew(!self.showOnlyNew());
+                }
+                self.showOnlyNew = ko.observable(false);
+                self.newCount = ko.computed(function() {
+                    var newTransactions = ko.utils.arrayFilter(self.transactions(), function (transaction) {
+                        return transaction.newlyAdded();
+                    });
+                    return newTransactions.length;
+                });
+                self.hasNew = ko.computed(function() {
+                    return self.newCount() > 0;
                 });
                 self.isLoadingTransactions = ko.observable(true);
                 self.itemCount = ko.computed(function() { 
@@ -41,19 +68,6 @@
                 }
 
                 var transactionUri = '/api/Transaction/';
-
-                function ajaxHelper(uri, method, data) {
-                    self.error('');
-                    return $.ajax({
-                        type: method,
-                        url: uri,
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        data: data ? JSON.stringify(data) : null
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        self.error(errorThrown);
-                    });
-                }
 
                 self.selectAll = function () {
                     ko.utils.arrayForEach(self.page(), function (transaction) {
@@ -81,39 +95,31 @@
                     });
                 }
 
-                function getAllTransactions(payload) {
-                    self.error('');
-                    return $.ajax({
-                        type: 'GET',
-                        url: transactionUri + "unimported",
-                        dataType: 'json',
-                        contentType: 'application/json',
-                        data: payload ? JSON.stringify(payload) : null,
-                        success: function(data) {
+                var ticker = $.connection.transactionTicker; // the generated client-side hub proxy
+
+                function init() {
+                    ticker.server.getUnimported()
+                        .done(function (data) {
                             var mappedTransactions = $.map(data, function (item) {
                                 return new Transaction(item, transactionUri);
                             });
                             self.isLoadingTransactions(false);
                             self.transactions(mappedTransactions);
-                        }
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        self.error(errorThrown);
-                    });
+                        })
+                        .fail(function (jqXHR, textStatus, errorThrown) {
+                            self.error(errorThrown);
+                        });
                 }
-
-                // Fetch the initial data.
-                getAllTransactions();
-
-                self.newlyAddedTransactions = [];
                 //Wait for any new data.
-                var ticker = $.connection.transactionTicker; // the generated client-side hub proxy
                 ticker.client.consumeNewTransactions = function (transactions) {
-                    var mappedTransactions = $.map(transactions, function (item) {
-                        return new Transaction(item, transactionUri);
+                    $.each(transactions, function (index, item) {
+                        var transaction = new Transaction(item, transactionUri);
+                        transaction.newlyAdded(true);
+                        self.transactions.push(transaction);
                     });
-                    self.newlyAddedTransactions.push(mappedTransactions);
                 }
+
                 $.connection.hub.logging = true;
-                $.connection.hub.start();
+                $.connection.hub.start().done(init);
             }
 });

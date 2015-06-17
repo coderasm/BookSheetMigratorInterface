@@ -39,20 +39,20 @@ namespace BookSheetMigration
             var serviceClient = new AWGServiceClient();
             var startDate = findStartDate(awgEvent);
             var endDate = DateTime.Now;
-            updateLastImportedForEvent(awgEvent, endDate);
+            updateLastMigratedForEvent(awgEvent, endDate);
             return serviceClient.findTransactionsByStatusDateRangeAndId(TransactionStatus.New, startDate, endDate, awgEvent.eventId);
         }
 
         private DateTime findStartDate(AWGEventDTO awgEvent)
         {
-            return awgEvent.lastImported == null ? awgEvent.startTime : awgEvent.lastImported.Value.AddMinutes(Settings.minutesBeforeLastImportedDate);
+            return awgEvent.lastMigrated == null ? awgEvent.startTime : awgEvent.lastMigrated.Value.AddMinutes(Settings.minutesBeforeLastMigrationDate);
         }
 
-        private async void updateLastImportedForEvent(AWGEventDTO awgEvent, DateTime endDate)
+        private async void updateLastMigratedForEvent(AWGEventDTO awgEvent, DateTime endDate)
         {
             var eventDao = createEventDao();
-            awgEvent.lastImported = endDate;
-            await eventDao.update(awgEvent, new List<string>(){"LastImported"});
+            awgEvent.lastMigrated = endDate;
+            await eventDao.update(awgEvent, new List<string>() { "LastMigrated" });
         }
 
         private List<AWGTransactionDTO> insertIdsIntoTransactions(List<AWGTransactionDTO> transactions, int id)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using BookSheetMigration;
-using BookSheetMigratorInterface.Controllers;
+using BookSheetMigration.HoldingTableToWebInterface;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 
@@ -12,16 +12,16 @@ namespace BookSheetMigratorInterface.SignalR
     public class TransactionTicker
     {
         // Singleton instance
-        private readonly static Lazy<TransactionTicker> _instance = new Lazy<TransactionTicker>(() => new TransactionTicker(GlobalHost.ConnectionManager.GetHubContext<TransactionTickerHub>().Clients));
-        private readonly object migrateTransactionsLock = new object();
-        private readonly TimeSpan migrateInterval = TimeSpan.FromMinutes(1);
+        private readonly static Lazy<TransactionTicker> instance = new Lazy<TransactionTicker>(() => new TransactionTicker(GlobalHost.ConnectionManager.GetHubContext<TransactionTickerHub>().Clients));
+        private readonly TimeSpan migrateInterval = Settings.timeBetweenMigrations;
         private readonly Timer timer;
         private volatile bool migratingNewTransactions = false;
+        private BroadCaster broadcaster;
 
         private TransactionTicker(IHubConnectionContext<dynamic> clients)
         {
             Clients = clients;
-            timer = new Timer(findAndReturnNewTransactions, null, migrateInterval, migrateInterval);
+            timer = new Timer(tickerDelegate, null, migrateInterval, migrateInterval);
 
         }
 
@@ -29,7 +29,7 @@ namespace BookSheetMigratorInterface.SignalR
         {
             get
             {
-                return _instance.Value;
+                return instance.Value;
             }
         }
 
@@ -39,31 +39,59 @@ namespace BookSheetMigratorInterface.SignalR
             set;
         }
 
-        private async void findAndReturnNewTransactions(object state)
+        public async Task<List<AWGTransactionDTO>> getUnimported(string clientConnectionId)
         {
-            if (atLeastOneClientConnected() && !migratingNewTransactions)
+            await migrateAndBroadcastToOthers(clientConnectionId);
+            var transactionDao = new TransactionDAO();
+            return await transactionDao.getUnimported();
+        }
+
+        private async void tickerDelegate(object state)
+        {
+            await migrateAndBroadcastToAll();
+        }
+
+        private async Task migrateAndBroadcastToAll()
+        {
+            if (!migratingNewTransactions && clientsConnected())
             {
                 migratingNewTransactions = true;
-                var transactions = await migrateAndReturnNewTransactions();
-                broadcastNewTransactions(transactions);
+                var transactions = await migrateAndAttachCollections();
+                broadcaster = new ToAllBroadcaster(Clients, transactions);
+                broadcaster.broadcast();
                 migratingNewTransactions = false;
             }
         }
 
-        private bool atLeastOneClientConnected()
+        private bool clientsConnected()
         {
             return UserHandler.ConnectedIds.Count > 0;
         }
 
-        private async Task<IEnumerable<AWGTransactionDTO>>  migrateAndReturnNewTransactions()
+        private async Task migrateAndBroadcastToOthers(string connectionId)
         {
-            var controller = new TransactionController();
-            return await controller.migrate();
+            if (!migratingNewTransactions)
+            {
+                migratingNewTransactions = true;
+                var transactions = await migrateAndAttachCollections();
+                broadcaster = new ToOthersBroadcaster(Clients, transactions, connectionId);
+                broadcaster.broadcast();
+                migratingNewTransactions = false;
+            }
         }
 
-        private void broadcastNewTransactions(IEnumerable<AWGTransactionDTO> transactions)
+        private async Task<List<AWGTransactionDTO>> migrateAndAttachCollections()
         {
-            Clients.All.consumeNewTransactions(transactions);
+            var transactions = await migrateAndReturnNewTransactions();
+            var transactionDao = new TransactionDAO();
+            await transactionDao.attachDealersAndContactsTo(transactions);
+            return transactions;
+        }
+
+        private async Task<List<AWGTransactionDTO>>  migrateAndReturnNewTransactions()
+        {
+            var migrator = new MultipleMigrator();
+            return await migrator.migrate();
         }
     }
 }

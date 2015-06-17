@@ -94,6 +94,7 @@
     <Compile Include="AwgToHoldingTable\ListEventOperation.cs" />
     <Compile Include="AwgToHoldingTable\ListInventoryOperation.cs" />
     <Compile Include="AwgToHoldingTable\ListTransactionOperation.cs" />
+    <Compile Include="HoldingTableToWebInterface\MultipleMigrator.cs" />
     <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByAddressAndCity.cs" />
     <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByCompanyName.cs" />
     <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByPhoneNumber.cs" />

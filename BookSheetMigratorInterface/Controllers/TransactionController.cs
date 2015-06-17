@@ -55,7 +55,6 @@ namespace BookSheetMigratorInterface.Controllers
         [Route("unimported")]
         public async Task<IEnumerable<AWGTransactionDTO>> GetUnimported()
         {
-            await migrate();
             var transactionDao = new TransactionDAO();
             return await transactionDao.getUnimported();
         }
@@ -64,38 +63,8 @@ namespace BookSheetMigratorInterface.Controllers
         [Route("unimported/{eventId:int}/{transactionId:int}")]
         public async Task<IEnumerable<AWGTransactionDTO>> GetUnimported(int eventId, int transactionId)
         {
-            await migrate();
             var transactionDao = new TransactionDAO();
             return await transactionDao.getUnimported(eventId, transactionId);
-        }
-
-        [NonAction]
-        public async Task<List<AWGTransactionDTO>>  migrate()
-        {
-                await migrateEvents();
-                return await migrateTransactions();
-        }
-
-        [NonAction]
-        private Task migrateEvents()
-        {
-            return Task.Run(() =>
-            {
-                DataMigrator<AWGEventDTO> upcomingEventMigrator = new BookSheetEventMigrator(EventStatus.Upcoming);
-                upcomingEventMigrator.migrate();
-                DataMigrator<AWGEventDTO> inprogressEventMigrator = new BookSheetEventMigrator(EventStatus.InProgress);
-                inprogressEventMigrator.migrate();
-            });
-        }
-
-        [NonAction]
-        private Task<List<AWGTransactionDTO>>  migrateTransactions()
-        {
-            return Task.Run(() =>
-            {
-                DataMigrator<AWGTransactionDTO> transactionMigrator = new BookSheetTransactionMigrator();
-                return transactionMigrator.migrate();
-            });
         }
 
         // POST: api/Transaction/update

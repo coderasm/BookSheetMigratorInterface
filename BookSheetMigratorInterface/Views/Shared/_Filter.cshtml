@@ -1,1 +1,10 @@
-﻿<span>Filter: </span><input data-bind="value: filter, valueUpdate: 'afterkeydown'" />
+﻿<div class="row">
+    <div class="col-md-6">
+        <span>Filter: </span><input data-bind="value: filter, valueUpdate: 'afterkeydown'" />
+    </div>
+    <div class="col-md-6">
+        <button class="btn btn-primary" data-bind="visible: hasNew, click: toggleShowOnlyNew" type="button">
+            New <span class="badge" data-bind="text: newCount"></span>
+        </button>
+    </div>
+</div>

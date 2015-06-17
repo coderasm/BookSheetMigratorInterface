@@ -55,7 +55,7 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             return transactions;
         }
 
-        private Task attachDealersAndContactsTo(List<AWGTransactionDTO> transactions)
+        public Task attachDealersAndContactsTo(List<AWGTransactionDTO> transactions)
         {
             return Task.Run(() =>
             {
