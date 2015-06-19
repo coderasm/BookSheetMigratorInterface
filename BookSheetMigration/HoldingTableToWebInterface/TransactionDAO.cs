@@ -64,11 +64,15 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             });
         }
 
-        public async Task<int> import(int eventId, int transactionId)
+        public async Task<object> import(int eventId, int transactionId)
         {
             var transactionsFound = await getUnimported(eventId, transactionId);
             if (isAlreadyImported(transactionsFound))
-                return 0;
+                return new
+                {
+                    success = false,
+                    message = "Already Imported."
+                };
             return await import(transactionsFound[0]);
         }
 
@@ -86,16 +90,26 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             return transactions;
         }
 
-        private async Task<int> import(AWGTransactionDTO transaction)
+        private async Task<object> import(AWGTransactionDTO transaction)
         {
             var sql = buildAndReturnImportQuery(transaction);
             var nonEntityDao = new NonEntityDAO();
             var result = await nonEntityDao.executeScalar(sql);
             if (result != 0)
+            {
                 markTransactionAsImported(transaction);
-            else
-                markTransactionAsFailedImport(transaction);
-            return result;
+                return new
+                {
+                    success = true,
+                    message = "Imported Successfully. I will disappear in 1 minute."
+                };
+            }
+            markTransactionAsFailedImport(transaction);
+            return new
+            {
+                success = false,
+                message = "Import Failed. See I.T."
+            };
         }
 
         private Sql buildAndReturnImportQuery(AWGTransactionDTO transaction)

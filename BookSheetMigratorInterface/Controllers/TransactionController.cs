@@ -31,8 +31,7 @@ namespace BookSheetMigratorInterface.Controllers
         public async Task<object> PostImport(int eventId, int transactionId)
         {
             var transactionDao = new TransactionDAO();
-            var result = await transactionDao.import(eventId, transactionId);
-            return new { success = (result != 0) };
+            return await transactionDao.import(eventId, transactionId);
         }
 
         // GET: api/Transaction/imported
@@ -73,7 +72,7 @@ namespace BookSheetMigratorInterface.Controllers
         {
             var transactionDao = new TransactionDAO();
             var result = await transactionDao.update(json);
-            return new {success=(result != 0)};
+            return new {success = (result != 0) };
         }
 
         // POST: api/Transaction/update/eventId/transactionId

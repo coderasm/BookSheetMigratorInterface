@@ -124,7 +124,7 @@
                    });
                }
 
-               self.importSale = function () {
+               self.importAndRemove = function (transactions) {
                    clearAlerts();
                    if (self.isImported) {
                        self.error("Already imported.");
@@ -145,12 +145,21 @@
                        dataType: 'json',
                        success: function (result) {
                            if (result.success) {
-                               self.success("Import Successful");
-                               self.isImported = true;
+                               self.success(result.message);
+                               self.remove(transactions);
                            } else
-                               self.success("Import Not Successful");
+                               self.error(result.message);
                        }
                    });
+               }
+
+               self.remove = function (transactions) {
+                   setTimeout(function() {
+                       var remainingTransactions = ko.utils.arrayFilter(transactions(), function (transaction) {
+                           return transaction !== self;
+                       });
+                       transactions(remainingTransactions);
+                   }, 60000);
                }
 
                function updateAllDirtyToNewValues() {

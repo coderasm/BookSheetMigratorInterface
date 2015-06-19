@@ -92,7 +92,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <button data-bind="click: importSale">Import</button>
+                                                <button data-bind="click: importAndRemove.bind(self, $parent.transactions)">Import</button>
                                                 <button type="submit">Update</button>
                                                 <button data-bind="click: clearChanges, enable: isDirty">Clear Changes</button>
                                             </div>

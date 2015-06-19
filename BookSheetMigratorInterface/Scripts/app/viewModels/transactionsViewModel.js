@@ -92,7 +92,7 @@
                 self.importSelected = function () {
                     ko.utils.arrayForEach(self.transactions(), function (transaction) {
                         if (transaction.importable() && transaction.isSelected())
-                            transaction.importSale();
+                            transaction.importAndRemove(self.transactions);
                     });
                 }
 
