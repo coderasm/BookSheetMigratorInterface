@@ -144,13 +144,18 @@
                        data: {},
                        dataType: 'json',
                        success: function (result) {
-                           if (result.success) {
-                               self.success(result.message);
-                               self.remove(transactions);
-                           } else
-                               self.error(result.message);
+                           self.showImportResult(result, transactions);
                        }
                    });
+               }
+
+               self.showImportResultAndRemove = function(result, transactions)
+               {
+                   if (result.success) {
+                       self.success(result.message);
+                       self.remove(transactions);
+                   } else
+                       self.error(result.message);
                }
 
                self.remove = function (transactions) {
@@ -188,6 +193,11 @@
                        }
                        return true;
                    });
+               }
+
+               self.equals = function(transaction)
+               {
+                   return self.eventId === transaction.eventId && self.transactionId === transaction.transactionId;
                }
 
                initializeBuyerContacts();

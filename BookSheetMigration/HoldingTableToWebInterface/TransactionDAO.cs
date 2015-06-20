@@ -142,12 +142,33 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             await entityDao.update(transaction, new List<string>() { "FailedImport" });
         }
 
-        public async Task<int> update(JToken json)
+        public async Task<object> update(JToken json)
         {
             var columns = extractUpdateColumns(json.Value<JObject>());
             var transaction = json.ToObject<AWGTransactionDTO>();
             var entityDao = new EntityDAO<AWGTransactionDTO>();
-            return await entityDao.update(transaction, columns);
+            var result = await entityDao.update(transaction, columns);
+            if (result != 0)
+            {
+                return new
+                {
+                    transaction.eventId,
+                    transaction.transactionId,
+                    result = new {
+                        success = true,
+                        message = "Updated Successfully. I will disappear in 1 minute."
+                        }
+                };
+            }
+            return new
+            {
+                transaction.eventId,
+                transaction.transactionId,
+                result = new {
+                    success = false,
+                    message = "Update Failed. See I.T."
+                }
+            };
         }
 
         public async Task<int> update(int eventId, int transactionId, JToken json)

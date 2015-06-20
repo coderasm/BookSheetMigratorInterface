@@ -90,9 +90,48 @@
                 }
 
                 self.importSelected = function () {
+                    var transactionsToImport = findSelectedTransactions();
+                    importTransactions(transactionsToImport);
+
+                }
+
+                function findSelectedTransactions() {
+                    var transactionsToImport = [];
                     ko.utils.arrayForEach(self.transactions(), function (transaction) {
-                        if (transaction.importable() && transaction.isSelected())
-                            transaction.importAndRemove(self.transactions);
+                        if (transaction.importable() && transaction.isSelected()) {
+                            transactionsToImport.push(
+                                {
+                                    eventId: transaction.eventId,
+                                    transactionId: transaction.transactionId
+                                }
+                            );
+                        }
+                    });
+                    return transactionsToImport;
+                }
+
+                function importTransactions(transactions) {
+                    $.ajax({
+                        url: transactionUri + "import",
+                        type: "POST",
+                        data: JSON.stringify(transactions),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            showMessagesAndRemove(data);
+                        }
+                    });
+                }
+
+                function showMessagesAndRemove(results) {
+                    results.forEach(function(data) {
+                        self.transactions().some(function (transaction) {
+                            if (transaction.equals(data)) {
+                                transaction.showImportResultAndRemove(data.result, self.transactions);
+                                return true;
+                            }
+                            return false;
+                        });
                     });
                 }
 

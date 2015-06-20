@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Web.Http;
 using BookSheetMigration;
@@ -24,6 +25,38 @@ namespace BookSheetMigratorInterface.Controllers
         {
             var transactionDao = new TransactionDAO();
             return await transactionDao.get(eventId, transactionId);
+        }
+
+        // POST: api/Transaction/import
+        [Route("import")]
+        public async Task<IEnumerable<object>> PostMulipleImports(IEnumerable<AWGTransactionDTO> transactions)
+        {
+            var results = new List<object>();
+            await importAndReturnResults(transactions, results);
+            return results;
+        }
+
+        private Task importAndReturnResults(IEnumerable<AWGTransactionDTO> transactions, List<object> results)
+        {
+            return Task.Run(async () =>
+            {
+                await processImports(transactions, results);
+            });
+        }
+
+        private async Task processImports(IEnumerable<AWGTransactionDTO> transactions, List<object> results)
+        {
+            foreach (var transaction in transactions)
+            {
+                await importTransactionAndReturnResult(results, transaction);
+            }
+        }
+
+        private async Task importTransactionAndReturnResult(List<object> results, AWGTransactionDTO transaction)
+        {
+            var importResult = await PostImport(transaction.eventId, transaction.transactionId);
+            var finalResult = new {transaction.eventId, transaction.transactionId, result = importResult};
+            results.Add(finalResult);
         }
 
         // POST: api/Transaction/import/eventId/transactionId
@@ -66,34 +99,45 @@ namespace BookSheetMigratorInterface.Controllers
             return await transactionDao.getUnimported(eventId, transactionId);
         }
 
-        // POST: api/Transaction/update
-        [Route("update")]
-        public async Task<object> PostUpdate(JToken json)
+        // PUT: api/Transaction/bulk-update
+        [Route("bulk-update")]
+        public async Task<object> Put(JArray transactions)
         {
-            var transactionDao = new TransactionDAO();
-            var result = await transactionDao.update(json);
-            return new {success = (result != 0) };
+            var results = new List<object>();
+            await updateAndReturnResults(transactions, results);
+            return results;
         }
 
-        // POST: api/Transaction/update/eventId/transactionId
-        [Route("update/{eventId:int}/{transactionId:int}")]
+        private Task updateAndReturnResults(JArray transactions, List<object> results)
+        {
+            return Task.Run(async () =>
+            {
+                await processUpdates(transactions, results);
+            });
+        }
+
+        private async Task processUpdates(JArray transactions, List<object> results)
+        {
+            foreach (var transaction in transactions)
+            {
+                await updateTransactionAndReturnResult(results, transaction);
+            }
+        }
+
+        private async Task updateTransactionAndReturnResult(List<object> results, JToken transaction)
+        {
+            var transactionDao = new TransactionDAO();
+            var result = await transactionDao.update(transaction);
+            results.Add(result);
+        }
+
+        // PUT: api/Transaction/eventId/transactionId
+        [Route("{eventId:int}/{transactionId:int}")]
         public async Task<object> PostUpdate(int eventId, int transactionId, [FromBody]JToken json)
         {
             var transactionDao = new TransactionDAO();
             var result = await transactionDao.update(eventId, transactionId, json);
             return new { success = (result != 0) };
-        }
-
-        // POST: api/Transaction
-        [Route("")]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT: api/Transaction/5
-        [Route("")]
-        public void Put(int id, [FromBody]string value)
-        {
         }
 
         // DELETE: api/Transaction/5
