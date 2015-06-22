@@ -31,32 +31,8 @@ namespace BookSheetMigratorInterface.Controllers
         [Route("import")]
         public async Task<IEnumerable<object>> PostMulipleImports(IEnumerable<AWGTransactionDTO> transactions)
         {
-            var results = new List<object>();
-            await importAndReturnResults(transactions, results);
-            return results;
-        }
-
-        private Task importAndReturnResults(IEnumerable<AWGTransactionDTO> transactions, List<object> results)
-        {
-            return Task.Run(async () =>
-            {
-                await processImports(transactions, results);
-            });
-        }
-
-        private async Task processImports(IEnumerable<AWGTransactionDTO> transactions, List<object> results)
-        {
-            foreach (var transaction in transactions)
-            {
-                await importTransactionAndReturnResult(results, transaction);
-            }
-        }
-
-        private async Task importTransactionAndReturnResult(List<object> results, AWGTransactionDTO transaction)
-        {
-            var importResult = await PostImport(transaction.eventId, transaction.transactionId);
-            var finalResult = new {transaction.eventId, transaction.transactionId, result = importResult};
-            results.Add(finalResult);
+            BulkAction<AWGTransactionDTO> bulkAction = new BulkImportAction(transactions);
+            return await bulkAction.processItemsAndReturnResults();
         }
 
         // POST: api/Transaction/import/eventId/transactionId
@@ -101,34 +77,10 @@ namespace BookSheetMigratorInterface.Controllers
 
         // PUT: api/Transaction/bulk-update
         [Route("bulk-update")]
-        public async Task<object> Put(JArray transactions)
+        public async Task<object> Put(IEnumerable<JToken> transactions)
         {
-            var results = new List<object>();
-            await updateAndReturnResults(transactions, results);
-            return results;
-        }
-
-        private Task updateAndReturnResults(JArray transactions, List<object> results)
-        {
-            return Task.Run(async () =>
-            {
-                await processUpdates(transactions, results);
-            });
-        }
-
-        private async Task processUpdates(JArray transactions, List<object> results)
-        {
-            foreach (var transaction in transactions)
-            {
-                await updateTransactionAndReturnResult(results, transaction);
-            }
-        }
-
-        private async Task updateTransactionAndReturnResult(List<object> results, JToken transaction)
-        {
-            var transactionDao = new TransactionDAO();
-            var result = await transactionDao.update(transaction);
-            results.Add(result);
+            BulkAction<JToken> bulkAction = new BulkUpdateAction(transactions);
+            return await bulkAction.processItemsAndReturnResults();
         }
 
         // PUT: api/Transaction/eventId/transactionId
@@ -142,8 +94,9 @@ namespace BookSheetMigratorInterface.Controllers
 
         // DELETE: api/Transaction/5
         [Route("")]
-        public void Delete(int id)
+        public object Delete(int id)
         {
+            return new {message = "Not implemented"};
         }
     }
 }

@@ -38,7 +38,7 @@ namespace BookSheetMigratorInterface.Tests
             var json = "{eventId: 12345, transactionId: 25687, bidAmount: 345}";
             var jsonObject = JToken.Parse(json);
             var controller = new TransactionController();
-            await controller.PostUpdate(12345, 25687, jsonObject);
+            await controller.Put(12345, 25687, jsonObject);
         }
     }
 }
