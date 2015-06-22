@@ -156,7 +156,7 @@ namespace BookSheetMigration.HoldingTableToWebInterface
                     transaction.transactionId,
                     result = new {
                         success = true,
-                        message = "Updated Successfully. I will disappear in 1 minute."
+                        message = "Updated Successfully"
                         }
                 };
             }

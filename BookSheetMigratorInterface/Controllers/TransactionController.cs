@@ -133,7 +133,7 @@ namespace BookSheetMigratorInterface.Controllers
 
         // PUT: api/Transaction/eventId/transactionId
         [Route("{eventId:int}/{transactionId:int}")]
-        public async Task<object> PostUpdate(int eventId, int transactionId, [FromBody]JToken json)
+        public async Task<object> Put(int eventId, int transactionId, [FromBody]JToken json)
         {
             var transactionDao = new TransactionDAO();
             var result = await transactionDao.update(eventId, transactionId, json);

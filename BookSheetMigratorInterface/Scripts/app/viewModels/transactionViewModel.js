@@ -98,55 +98,74 @@
                    return self.bidAmount() >= 1000 && self.transportFee() >= 0;
                });
 
-               self.updateSale = function (formElement) {
-                   clearAlerts();
-                   if (!self.isDirty()) {
-                       self.error("Nothing to update.");
+               self.update = function (formElement) {
+                   if (!self.isValidateUpdate())
                        return;
-                   }
-                   else if (!self.updateable()) {
-                       self.error("Fix your errors.");
-                       return;
-                   }
                    var postData = $(formElement).formToJSON();
                    $.ajax({
-                       url: transactionUri + "update",
-                       type: "POST",
+                       url: transactionUri + self.eventId + "/" + self.transactionId,
+                       type: "PUT",
                        data: postData,
                        dataType: 'json',
                        success: function (result) {
                            if (result.success) {
                                updateAllDirtyToNewValues();
-                               self.success("Update Successful");
+                               self.success("Update Successful.");
                            } else
-                               self.error("Update Not Successful");
+                               self.error("Update Failed. See I.T.");
                        }
                    });
                }
 
-               self.importAndRemove = function (transactions) {
+               self.isValidateUpdate = function() {
                    clearAlerts();
-                   if (self.isImported) {
-                       self.error("Already imported.");
-                       return;
-                   }
-                   if (self.isDirty()) {
-                       self.error("Update or clear your changes first.");
-                       return;
-                   }
-                   if (!self.importable()) {
+                   if (!self.isDirty()) {
+                       self.error("Nothing to update.");
+                       return false;
+                   } else if (!self.updateable()) {
                        self.error("Fix your errors.");
-                       return;
+                       return false;
                    }
+                   return true;
+               }
+
+               self.showUpdateResult = function (result) {
+                   if (result.success) {
+                       updateAllDirtyToNewValues();
+                       self.success(result.message);
+                   } else
+                       self.error(result.message);
+               }
+
+               self.importAndRemove = function (transactions) {
+                   if (!self.isValidImport())
+                       return;
                    $.ajax({
                        url: transactionUri + "import/" + self.eventId + "/" + self.transactionId,
                        type: "POST",
                        data: {},
                        dataType: 'json',
                        success: function (result) {
-                           self.showImportResult(result, transactions);
+                           self.showImportResultAndRemove(result, transactions);
                        }
                    });
+               }
+
+               self.isValidImport = function() {
+                   clearAlerts();
+                   if (self.isImported) {
+                       self.error("Already imported.");
+                       return false;
+                   }
+                   if (self.isDirty()) {
+                       self.error("Update or clear your changes first.");
+                       return false;
+                   }
+                   if (!self.importable()) {
+                       self.error("Fix your errors.");
+                       return false;
+                   }
+                   return true;
                }
 
                self.showImportResultAndRemove = function(result, transactions)

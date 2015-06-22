@@ -90,15 +90,16 @@
                 }
 
                 self.importSelected = function () {
-                    var transactionsToImport = findSelectedTransactions();
-                    importTransactions(transactionsToImport);
+                    var selectedTransactions = findSelectedTransactions();
+                    var importableTransactions = findImportableInSelected(selectedTransactions);
+                    importTransactions(importableTransactions);
 
                 }
 
-                function findSelectedTransactions() {
+                function findImportableInSelected(selectedTransactions) {
                     var transactionsToImport = [];
-                    ko.utils.arrayForEach(self.transactions(), function (transaction) {
-                        if (transaction.importable() && transaction.isSelected()) {
+                    ko.utils.arrayForEach(selectedTransactions, function (transaction) {
+                        if (transaction.importable() && transaction.isValidImport()) {
                             transactionsToImport.push(
                                 {
                                     eventId: transaction.eventId,
@@ -111,6 +112,8 @@
                 }
 
                 function importTransactions(transactions) {
+                    if (transactions.length === 0)
+                        return;
                     $.ajax({
                         url: transactionUri + "import",
                         type: "POST",
@@ -118,12 +121,12 @@
                         dataType: 'json',
                         contentType: 'application/json',
                         success: function (data) {
-                            showMessagesAndRemove(data);
+                            showImportMessagesAndRemove(data);
                         }
                     });
                 }
 
-                function showMessagesAndRemove(results) {
+                function showImportMessagesAndRemove(results) {
                     results.forEach(function(data) {
                         self.transactions().some(function (transaction) {
                             if (transaction.equals(data)) {
@@ -136,9 +139,63 @@
                 }
 
                 self.updateSelected = function () {
-                    ko.utils.arrayForEach(self.transactions(), function (transaction) {
-                        if (transaction.updateable() && transaction.isSelected())
-                            transaction.updateSale();
+                    var selectedTransactions = findSelectedTransactions();
+                    var updateableTransactions = findUpdateableInSelected(selectedTransactions);
+                    updateTransactions(updateableTransactions);
+
+                }
+
+                function findSelectedTransactions() {
+                    return ko.utils.arrayFilter(self.transactions(), function (transaction) {
+                        return transaction.isSelected();
+                    });
+                }
+
+                function findUpdateableInSelected(selectedTransactions) {
+                    var transactionsToUpdate = [];
+                    ko.utils.arrayForEach(selectedTransactions, function (transaction) {
+                        if (transaction.updateable() && transaction.isValidateUpdate()) {
+                            transactionsToUpdate.push(
+                                {
+                                    eventId: transaction.eventId,
+                                    transactionId: transaction.transactionId,
+                                    sellerDealerId: transaction.sellerDealerId(),
+                                    buyerDealerId: transaction.buyerDealerId(),
+                                    buyerContactId: transaction.buyerContactId(),
+                                    bidAmount: transaction.bidAmount(),
+                                    transportFee: transaction.transportFee(),
+                                    soldDate: transaction.soldDate()
+                                }
+                            );
+                        }
+                    });
+                    return transactionsToUpdate;
+                }
+
+                function updateTransactions(transactions) {
+                    if (transactions.length === 0)
+                        return;
+                    $.ajax({
+                        url: transactionUri + "bulk-update",
+                        type: "PUT",
+                        data: JSON.stringify(transactions),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            showUpdateMessages(data);
+                        }
+                    });
+                }
+
+                function showUpdateMessages(results) {
+                    results.forEach(function (data) {
+                        self.transactions().some(function (transaction) {
+                            if (transaction.equals(data)) {
+                                transaction.showUpdateResult(data.result);
+                                return true;
+                            }
+                            return false;
+                        });
                     });
                 }
 
