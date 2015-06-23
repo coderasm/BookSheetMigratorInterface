@@ -13,7 +13,7 @@
 
         protected override string getReplacementString()
         {
-            return "\\2";
+            return "$2";
         }
     }
 }

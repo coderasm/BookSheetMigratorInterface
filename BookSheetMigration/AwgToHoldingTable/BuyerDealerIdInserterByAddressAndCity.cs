@@ -24,12 +24,12 @@ namespace BookSheetMigration.AwgToHoldingTable
             };
         }
 
-        protected override string getNameInTransaction()
+        public override string getNameInTransaction()
         {
             return transaction.buyerCompanyName;
         }
 
-        protected override string getEntityName(DealerDTO dealer)
+        public override string getEntityName(DealerDTO dealer)
         {
             return dealer.companyName;
         }
@@ -45,7 +45,7 @@ namespace BookSheetMigration.AwgToHoldingTable
             return await entitiesFinder.find();
         }
 
-        protected override void setIdFromFirstFoundEntity(DealerDTO entity)
+        public override void setIdFromFirstFoundEntity(DealerDTO entity)
         {
             transaction.buyerDealerId = entity.dealerId;
         }

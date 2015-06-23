@@ -1,9 +1,11 @@
-﻿namespace BookSheetMigration
+﻿using BookSheetMigration.StringManipulation;
+
+namespace BookSheetMigration
 {
-    public class NameCleaner
+    public class StringCleaner
     {
         private string name;
-        protected NameCleaner(string name)
+        public StringCleaner(string name)
         {
             this.name = name;
         }
@@ -11,12 +13,13 @@
         public string clean()
         {
             applyAllCleaners();
-            return name;
+            return name.Trim();
         }
 
         protected void applyAllCleaners()
         {
             removePunctuation();
+            removeLeadingArticleConjunctionPreposition();
             removeArticleConjunctionPreposition();
             removeRepeatedWhitespace();
         }
@@ -25,6 +28,12 @@
         {
             var punctuationRemover = new PunctuationRemover(name);
             name = punctuationRemover.remove();
+        }
+
+        protected void removeLeadingArticleConjunctionPreposition()
+        {
+            var leadingArticleConjunctionPrepositionRemover = new LeadingArticleConjunctionPrepositionRemover(name);
+            name = leadingArticleConjunctionPrepositionRemover.remove();
         }
 
         protected void removeArticleConjunctionPreposition()

@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using BookSheetMigration.AwgToHoldingTable;
 
 namespace BookSheetMigration
 {
@@ -36,39 +37,30 @@ namespace BookSheetMigration
         {
             if (foundMorethanOneEntityIn(possibleEntities))
             {
-                if (ableToSetPossibleEntityByName(possibleEntities))
+                if (ableToSetPossibleEntityByFullName(possibleEntities))
+                    return true;
+                if (ableToSetPossibleEntityByPartialName(possibleEntities))
                     return true;
             }
             setIdFromFirstFoundEntity(possibleEntities[0]);
             return true;
         }
 
-        private bool ableToSetPossibleEntityByName(List<DealerDTO> dealers)
+        private bool ableToSetPossibleEntityByFullName(List<DealerDTO> dealers)
         {
-            var nameIntransaction = removePunctuationAndToLower(getNameInTransaction());
-            foreach (var dealer in dealers)
-            {
-                var foundName = getEntityName(dealer);
-                var cleanFoundName = removePunctuationAndToLower(foundName);
-                if (cleanFoundName.Equals(nameIntransaction))
-                {
-                    setIdFromFirstFoundEntity(dealer);
-                    return true;
-                }
-            }
-            return false;
+            DealerMatcher dealerMatcher = new DealerMatcherByFullName(dealers, this);
+            return dealerMatcher.foundAndSetMatch();
         }
 
-        protected abstract string getNameInTransaction();
-
-        protected abstract string getEntityName(DealerDTO entity);
-
-        private static string removePunctuationAndToLower(string name)
+        private bool ableToSetPossibleEntityByPartialName(List<DealerDTO> dealers)
         {
-            name = Regex.Replace(name, "[^\\w\\s]", "");
-            name = name.ToLower().Trim();
-            return name;
+            DealerMatcher dealerMatcher = new DealerMatcherByPartialName(dealers, this);
+            return dealerMatcher.foundAndSetMatch();
         }
+
+        public abstract string getNameInTransaction();
+
+        public abstract string getEntityName(DealerDTO entity);
 
         protected abstract Task<List<DealerDTO>> findEntities(params object[] entityArguments);
 
@@ -94,6 +86,6 @@ namespace BookSheetMigration
             return possibleEntities.Count > 1;
         }
 
-        protected abstract void setIdFromFirstFoundEntity(DealerDTO entity);
+        public abstract void setIdFromFirstFoundEntity(DealerDTO entity);
     }
 }

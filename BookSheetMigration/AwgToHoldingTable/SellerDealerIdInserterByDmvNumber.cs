@@ -25,12 +25,12 @@ namespace BookSheetMigration
             };
         }
 
-        protected override string getNameInTransaction()
+        public override string getNameInTransaction()
         {
             return transaction.sellerCompanyName;
         }
 
-        protected override string getEntityName(DealerDTO dealer)
+        public override string getEntityName(DealerDTO dealer)
         {
             return dealer.companyName;
         }
@@ -46,7 +46,7 @@ namespace BookSheetMigration
             return await entitiesFinder.find();
         }
 
-        protected override void setIdFromFirstFoundEntity(DealerDTO entity)
+        public override void setIdFromFirstFoundEntity(DealerDTO entity)
         {
             transaction.sellerDealerId = entity.dealerId;
         }

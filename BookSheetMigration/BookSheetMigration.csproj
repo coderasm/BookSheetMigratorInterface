@@ -52,7 +52,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArticleConjunctionPrepositionRemover.cs" />
+    <Compile Include="AwgToHoldingTable\DealerMatcher.cs" />
+    <Compile Include="AwgToHoldingTable\DealerMatcherByFullName.cs" />
+    <Compile Include="AwgToHoldingTable\DealerMatcherByPartialName.cs" />
+    <Compile Include="StringManipulation\ArticleConjunctionPrepositionRemover.cs" />
     <Compile Include="AwgToHoldingTable\AWGEventDTO.cs" />
     <Compile Include="AwgToHoldingTable\AWGEventDirectory.cs" />
     <Compile Include="AwgToHoldingTable\BookSheetEventMigrator.cs" />
@@ -67,7 +70,7 @@
     <Compile Include="AwgToHoldingTable\ContactIdInserter.cs" />
     <Compile Include="AwgToHoldingTable\SellerDealerIdInserterByAddressAndCity.cs" />
     <Compile Include="AwgToHoldingTable\SellerDealerIdInserterByCompanyName.cs" />
-    <Compile Include="CharacterRemover.cs" />
+    <Compile Include="StringManipulation\CharacterRemover.cs" />
     <Compile Include="DatabaseFactory.cs" />
     <Compile Include="DealersFinderByAddressAndCity.cs" />
     <Compile Include="DealersFinderByCompanyName.cs" />
@@ -102,12 +105,13 @@
     <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByPhoneNumber.cs" />
     <Compile Include="HoldingTableToWebInterface\TransactionCollectionLoader.cs" />
     <Compile Include="HoldingTableToWebInterface\TransactionDAO.cs" />
-    <Compile Include="NameCleaner.cs" />
+    <Compile Include="StringManipulation\LeadingArticleConjunctionPrepositionRemover.cs" />
+    <Compile Include="StringManipulation\StringCleaner.cs" />
     <Compile Include="NonEntityDAO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HoldingTableToWebInterface\SellerDealersInserterByDmvNumber.cs" />
-    <Compile Include="PunctuationRemover.cs" />
-    <Compile Include="RepeatedWhitespaceRemover.cs" />
+    <Compile Include="StringManipulation\PunctuationRemover.cs" />
+    <Compile Include="StringManipulation\RepeatedWhitespaceRemover.cs" />
     <Compile Include="Settings.cs">
       <SubType>Code</SubType>
     </Compile>
