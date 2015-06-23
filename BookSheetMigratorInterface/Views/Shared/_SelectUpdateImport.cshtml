@@ -5,6 +5,6 @@
     </div>
     <div class="col-md-7">
         <button data-bind="click: updateSelected">Update Selected</button>
-        <button data-bind="click: importSelected">Import Selected</button>
+        <button data-bind="click: importSelected, enable: isNotImporting">Import Selected</button>
     </div>
 </div>

@@ -46,6 +46,7 @@
                });
                self.newlyAdded = ko.observable(false);
                self.isImported = data.imported != null;
+               self.isNotImporting = ko.observable(true);
                self.isSelected = ko.observable(false);
                self.error = ko.observable("");
                self.hasError = ko.computed(function () {
@@ -140,12 +141,14 @@
                self.importAndRemove = function (transactions) {
                    if (!self.isValidImport())
                        return;
+                   self.isNotImporting(false);
                    $.ajax({
                        url: transactionUri + "import/" + self.eventId + "/" + self.transactionId,
                        type: "POST",
                        data: {},
                        dataType: 'json',
                        success: function (result) {
+                           self.isNotImporting(true);
                            self.showImportResultAndRemove(result, transactions);
                        }
                    });
@@ -171,6 +174,7 @@
                self.showImportResultAndRemove = function(result, transactions)
                {
                    if (result.success) {
+                       self.isImported = true;
                        self.success(result.message);
                        self.remove(transactions);
                    } else

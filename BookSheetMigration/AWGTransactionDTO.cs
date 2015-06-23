@@ -11,11 +11,6 @@ namespace BookSheetMigration
     [PrimaryKey("EventId, TransactionId", autoIncrement = false)]
     public class AWGTransactionDTO
     {
-        public AWGTransactionDTO()
-        {
-            soldDate = DateTime.Now;
-        }
-
         [Column("EventId")]
         public int eventId { get; set; }
 
@@ -39,6 +34,7 @@ namespace BookSheetMigration
         [Ignore]
         public decimal bidAmountFromXml { get; set; }
 
+        [XmlElement("SaleDate")]
         [Column("SoldDate")]
         public DateTime soldDate { get; set; }
 

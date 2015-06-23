@@ -13,6 +13,7 @@
                 });
                 self.filter = ko.observable("");
                 self.showOnlyNew = ko.observable(false);
+                self.isNotImporting = ko.observable(true);
                 self.filteredTransactions = ko.computed(function() {
                     var filter = self.filter().toLowerCase();
                     if (!filter && !self.showOnlyNew()) {
@@ -91,9 +92,12 @@
 
                 self.importSelected = function () {
                     var selectedTransactions = findSelectedTransactions();
+                    if (selectedTransactions.length == 0) {
+                        return;
+                    }
+                    self.isNotImporting(false);
                     var importableTransactions = findImportableInSelected(selectedTransactions);
                     importTransactions(importableTransactions);
-
                 }
 
                 function findImportableInSelected(selectedTransactions) {
@@ -121,6 +125,7 @@
                         dataType: 'json',
                         contentType: 'application/json',
                         success: function (data) {
+                            self.isNotImporting(true);
                             showImportMessagesAndRemove(data);
                         }
                     });
