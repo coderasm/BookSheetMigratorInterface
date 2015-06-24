@@ -46,9 +46,9 @@ namespace BookSheetMigration
             return await entitiesFinder.find();
         }
 
-        public override void setIdFromFirstFoundEntity(DealerDTO entity)
+        public override void setIdFromFirstFoundEntity(DealerDTO dealer)
         {
-            transaction.sellerDealerId = entity.dealerId;
+            transaction.sellerDealerId = dealer.dealerId;
         }
     }
 }

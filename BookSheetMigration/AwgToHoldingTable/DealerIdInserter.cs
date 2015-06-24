@@ -9,23 +9,25 @@ namespace BookSheetMigration
     {
         protected AWGTransactionDTO transaction;
 
+        protected DealerIdInserter(AWGTransactionDTO transaction)
+        {
+            this.transaction = transaction;
+        }
+
         public bool insertIdIfFound()
         {
             if (entityArgumentsExist())
             {
-                var entityArguments = getEntityArguments();
-                return insertIdIfAtLeastOneFound(entityArguments);
+                return insertIdIfAtLeastOneFound();
             }
             return false;
         }
 
         protected abstract bool entityArgumentsExist();
 
-        protected abstract object[] getEntityArguments();
-
-        private bool insertIdIfAtLeastOneFound(params object[] entityArguments)
+        private bool insertIdIfAtLeastOneFound()
         {
-            var possibleEntities = findEntities(entityArguments).Result;
+            var possibleEntities = findEntities().Result;
             if (foundAtLeastOneEntityIn(possibleEntities))
             {
                 return InsertId(possibleEntities);
@@ -37,6 +39,8 @@ namespace BookSheetMigration
         {
             if (foundMorethanOneEntityIn(possibleEntities))
             {
+                if (ableToSetPossibleEntityAsABS())
+                    return true;
                 if (ableToSetPossibleEntityByFullName(possibleEntities))
                     return true;
                 if (ableToSetPossibleEntityByPartialName(possibleEntities))
@@ -45,6 +49,13 @@ namespace BookSheetMigration
             setIdFromFirstFoundEntity(possibleEntities[0]);
             return true;
         }
+
+        private bool ableToSetPossibleEntityAsABS()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected abstract string getEntityNumber();
 
         private bool ableToSetPossibleEntityByFullName(List<DealerDTO> dealers)
         {
@@ -60,20 +71,29 @@ namespace BookSheetMigration
 
         public abstract string getNameInTransaction();
 
-        public abstract string getEntityName(DealerDTO entity);
+        public string getEntityName(DealerDTO dealer)
+        {
+            return dealer.companyName;
+        }
 
-        protected abstract Task<List<DealerDTO>> findEntities(params object[] entityArguments);
+        private async Task<List<DealerDTO>> findEntities()
+        {
+            var entitiesFinder = findDealers();
+            return await entitiesFinder.find();
+        }
+
+        protected abstract DealersFinder findDealers();
 
         private bool foundAtLeastOneEntityIn(List<DealerDTO> dealers)
         {
-            if (insertingBuyerDealerId())
-            {
-                dealers.RemoveAll(hasNoContacts);
-            }
+            removeDealersWithoutContacts(dealers);
             return dealers.Count > 0;
         }
 
-        protected abstract bool insertingBuyerDealerId();
+        private void removeDealersWithoutContacts(List<DealerDTO> dealers)
+        {
+            dealers.RemoveAll(hasNoContacts);
+        }
 
         private bool hasNoContacts(DealerDTO dealer)
         {
@@ -86,6 +106,6 @@ namespace BookSheetMigration
             return possibleEntities.Count > 1;
         }
 
-        public abstract void setIdFromFirstFoundEntity(DealerDTO entity);
+        public abstract void setIdFromFirstFoundEntity(DealerDTO dealer);
     }
 }

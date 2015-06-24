@@ -1,52 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace BookSheetMigration.AwgToHoldingTable
+﻿namespace BookSheetMigration.AwgToHoldingTable
 {
-    public class BuyerDealerIdInserterByPhoneNumber : DealerIdInserter
+    public class BuyerDealerIdInserterByPhoneNumber : BuyerDealerIdInserter
     {
-         public BuyerDealerIdInserterByPhoneNumber(AWGTransactionDTO transaction)
+        public BuyerDealerIdInserterByPhoneNumber(AWGTransactionDTO transaction) : base(transaction)
         {
-            this.transaction = transaction;
         }
 
-        protected override bool entityArgumentsExist()
+        protected override bool dealerSearchCriteriaExists()
         {
             return !string.IsNullOrEmpty(transaction.buyerPhone);
         }
 
-        protected override object[] getEntityArguments()
+        protected override DealersFinder findPotentialBuyerDealers()
         {
-            return new object[]
-            {
-                transaction.buyerPhone
-            };
-        }
-
-        public override string getNameInTransaction()
-        {
-            return transaction.buyerCompanyName;
-        }
-
-        public override string getEntityName(DealerDTO dealer)
-        {
-            return dealer.companyName;
-        }
-
-        protected override bool insertingBuyerDealerId()
-        {
-            return true;
-        }
-
-        protected override async Task<List<DealerDTO>> findEntities(params object[] entityArguments)
-        {
-            var entitiesFinder = new DealersFinderByPhoneNumber((string)entityArguments[0]);
-            return await entitiesFinder.find();
-        }
-
-        public override void setIdFromFirstFoundEntity(DealerDTO entity)
-        {
-            transaction.buyerDealerId = entity.dealerId;
+            return new DealersFinderByPhoneNumber(transaction.buyerPhone);
         }
     }
 }
