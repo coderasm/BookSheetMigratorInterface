@@ -1,43 +1,22 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using BookSheetMigration.AwgToHoldingTable;
+﻿using BookSheetMigration.AwgToHoldingTable;
+using BookSheetMigration.HoldingTableToWebInterface;
 
 namespace BookSheetMigration
 {
-    public class BuyerDealersInserterByDmvNumber : DealerCollectionInserter
+    public class BuyerDealersInserterByDmvNumber : BuyerDealerCollectionInserter
     {
-        public BuyerDealersInserterByDmvNumber(AWGTransactionDTO transaction)
+        public BuyerDealersInserterByDmvNumber(AWGTransactionDTO transaction) : base(transaction)
         {
-            this.transaction = transaction;
         }
 
-        protected override bool entityArgumentsExist()
+        protected override bool dealerSearchCriteriaExists()
         {
             return !string.IsNullOrEmpty(transaction.buyerDmvNumber);
         }
 
-        protected override object[] getEntityArguments()
+        protected override DealersFinder findPotentialBuyerDealers()
         {
-            return new object[]
-            {
-                transaction.buyerDmvNumber
-            };
-        }
-
-        protected override async Task<List<DealerDTO>> findEntities(params object[] entityArguments)
-        {
-            var entitiesFinder = new DealersFinderByDmvNumber((string)entityArguments[0]);
-            return await entitiesFinder.find();
-        }
-
-        protected override void setPossibleCollection(List<DealerDTO> entity)
-        {
-            transaction.buyers = entity;
-        }
-
-        protected override bool insertingBuyersCollection()
-        {
-            return true;
+            return new DealersFinderByDmvNumber(transaction.buyerDmvNumber);
         }
     }
 }

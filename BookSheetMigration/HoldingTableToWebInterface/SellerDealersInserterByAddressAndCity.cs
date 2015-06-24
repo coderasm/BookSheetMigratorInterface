@@ -1,43 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace BookSheetMigration.HoldingTableToWebInterface
+﻿namespace BookSheetMigration.HoldingTableToWebInterface
 {
-    public class SellerDealersInserterByAddressAndCity : DealerCollectionInserter
+    public class SellerDealersInserterByAddressAndCity : SellerDealerCollectionInserter
     {
-        public SellerDealersInserterByAddressAndCity(AWGTransactionDTO transaction)
+        public SellerDealersInserterByAddressAndCity(AWGTransactionDTO transaction) : base(transaction)
         {
-            this.transaction = transaction;
         }
 
-        protected override bool entityArgumentsExist()
+        protected override bool dealerSearchCriteriaExists()
         {
             return !string.IsNullOrEmpty(transaction.sellerAddress) && !string.IsNullOrEmpty(transaction.sellerCity);
         }
 
-        protected override object[] getEntityArguments()
+        protected override DealersFinder findPotentialSellerDealers()
         {
-            return new object[]
-            {
-                transaction.sellerAddress,
-                transaction.sellerCity
-            };
-        }
-
-        protected override async Task<List<DealerDTO>> findEntities(params object[] entityArguments)
-        {
-            var entitiesFinder = new DealersFinderByAddressAndCity((string)entityArguments[0], (string)entityArguments[1]);
-            return await entitiesFinder.find();
-        }
-
-        protected override void setPossibleCollection(List<DealerDTO> entity)
-        {
-            transaction.sellers = entity;
-        }
-
-        protected override bool insertingBuyersCollection()
-        {
-            return false;
+            return new DealersFinderByAddressAndCity(transaction.sellerAddress, transaction.sellerCity);
         }
     }
 }

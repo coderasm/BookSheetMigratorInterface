@@ -7,23 +7,25 @@ namespace BookSheetMigration
     {
         protected AWGTransactionDTO transaction;
 
+        protected DealerCollectionInserter(AWGTransactionDTO transaction)
+        {
+            this.transaction = transaction;
+        }
+
         public bool insertCollectionIfFound()
         {
             if (entityArgumentsExist())
             {
-                var entityArguments = getEntityArguments();
-                return insertCollectionIfAtLeastOneEntryFound(entityArguments);
+                return insertCollectionIfAtLeastOneEntryFound();
             }
             return false;
         }
 
         protected abstract bool entityArgumentsExist();
 
-        protected abstract object[] getEntityArguments();
-
-        private bool insertCollectionIfAtLeastOneEntryFound(params object[] entityArguments)
+        private bool insertCollectionIfAtLeastOneEntryFound()
         {
-            var possibleCollectionOfEntities = findEntities(entityArguments).Result;
+            var possibleCollectionOfEntities = findEntities().Result;
             if (foundAtLeastOneEntityIn(possibleCollectionOfEntities))
             {
                 setPossibleCollection(possibleCollectionOfEntities);
@@ -32,18 +34,24 @@ namespace BookSheetMigration
             return false;
         }
 
-        protected abstract Task<List<DealerDTO>> findEntities(params object[] entityArguments);
+        private async Task<List<DealerDTO>> findEntities()
+        {
+            var entitiesFinder = findDealers();
+            return await entitiesFinder.find();
+        }
+
+        protected abstract DealersFinder findDealers();
 
         private bool foundAtLeastOneEntityIn(List<DealerDTO> dealers)
         {
-            if (insertingBuyersCollection())
-            {
-                dealers.RemoveAll(hasNoContacts);
-            }
+            removeDealersWithoutContacts(dealers);
             return dealers.Count > 0;
         }
 
-        protected abstract bool insertingBuyersCollection();
+        private void removeDealersWithoutContacts(List<DealerDTO> dealers)
+        {
+            dealers.RemoveAll(hasNoContacts);
+        }
 
         private bool hasNoContacts(DealerDTO dealer)
         {

@@ -57,6 +57,8 @@
     <Compile Include="AwgToHoldingTable\DealerMatcherByFullName.cs" />
     <Compile Include="AwgToHoldingTable\DealerMatcherByPartialName.cs" />
     <Compile Include="AwgToHoldingTable\SellerDealerIdInserter.cs" />
+    <Compile Include="HoldingTableToWebInterface\BuyerDealerCollectionInserter.cs" />
+    <Compile Include="HoldingTableToWebInterface\SellerDealerCollectionInserter.cs" />
     <Compile Include="StringManipulation\ArticleConjunctionPrepositionRemover.cs" />
     <Compile Include="AwgToHoldingTable\AWGEventDTO.cs" />
     <Compile Include="AwgToHoldingTable\AWGEventDirectory.cs" />
