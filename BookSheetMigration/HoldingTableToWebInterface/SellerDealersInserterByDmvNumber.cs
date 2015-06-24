@@ -1,8 +1,9 @@
 ﻿using BookSheetMigration.AwgToHoldingTable;
+using BookSheetMigration.HoldingTableToWebInterface;
 
 namespace BookSheetMigration
 {
-    public class SellerDealersInserterByDmvNumber : SellerDealerIdInserter
+    public class SellerDealersInserterByDmvNumber : SellerDealerCollectionInserter
     {
         public SellerDealersInserterByDmvNumber(AWGTransactionDTO transaction) : base(transaction)
         {

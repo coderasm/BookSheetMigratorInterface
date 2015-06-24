@@ -30,9 +30,14 @@
 
         protected abstract DealersFinder findPotentialSellerDealers();
 
-        public override void setIdFromFirstFoundEntity(DealerDTO dealer)
+        public override void setDealerId(DealerDTO dealer)
         {
             transaction.sellerDealerId = dealer.dealerId;
+        }
+
+        protected override bool dmvNumberIsABS()
+        {
+            return transaction.sellerDmvNumber.Equals(Settings.ABSDmvNumber);
         }
     }
 }

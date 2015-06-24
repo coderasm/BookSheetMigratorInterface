@@ -28,7 +28,7 @@ namespace BookSheetMigration.AwgToHoldingTable
                 foundName = dealerIdInserter.getEntityName(dealer);
                 if (doesMatch())
                 {
-                    dealerIdInserter.setIdFromFirstFoundEntity(dealer);
+                    dealerIdInserter.setDealerId(dealer);
                     return true;
                 }
             }
