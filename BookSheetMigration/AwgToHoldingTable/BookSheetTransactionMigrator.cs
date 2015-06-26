@@ -38,8 +38,9 @@ namespace BookSheetMigration
         {
             var serviceClient = new AWGServiceClient();
             var startDate = findStartDate(awgEvent);
-            var endDate = DateTime.Now;
-            updateLastMigratedForEvent(awgEvent, endDate);
+            var now = DateTime.Now;
+            var endDate = findEndDate(now);
+            updateLastMigratedForEvent(awgEvent, now);
             return serviceClient.findTransactionsByStatusDateRangeAndId(TransactionStatus.New, startDate, endDate, awgEvent.eventId);
         }
 
@@ -48,10 +49,22 @@ namespace BookSheetMigration
             return awgEvent.lastMigrated == null ? awgEvent.startTime : awgEvent.lastMigrated.Value;
         }
 
-        private async void updateLastMigratedForEvent(AWGEventDTO awgEvent, DateTime endDate)
+        private DateTime findEndDate(DateTime now)
+        {
+            var endHour = Settings.migrationRangeEndHour;
+            var hourDifference = endHour - now.Hour;
+            return isAfterOrEqualToLastHour(hourDifference) ? now : now.AddHours(hourDifference);
+        }
+
+        private bool isAfterOrEqualToLastHour(int hourDifference)
+        {
+            return hourDifference <= 0;
+        }
+
+        private async void updateLastMigratedForEvent(AWGEventDTO awgEvent, DateTime now)
         {
             var eventDao = createEventDao();
-            awgEvent.lastMigrated = endDate;
+            awgEvent.lastMigrated = now;
             await eventDao.update(awgEvent, new List<string>() { "LastMigrated" });
         }
 

@@ -263,6 +263,46 @@
     <Content Include="Scripts-Build\bootstrap.min.js" />
     <Content Include="Scripts-Build\build.txt" />
     <Content Include="Scripts-Build\domReady.js" />
+    <Content Include="Config\appSettings.config">
+      <TransformOnBuild>true</TransformOnBuild>
+    </Content>
+    <None Include="Config\appSettings.BookSheetDebug.config">
+      <DependentUpon>appSettings.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="Config\appSettings.BookSheetRelease.config">
+      <DependentUpon>appSettings.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="Config\appSettings.Release.config">
+      <DependentUpon>appSettings.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <Content Include="Config\connectionStrings.config">
+      <TransformOnBuild>true</TransformOnBuild>
+    </Content>
+    <None Include="Config\connectionStrings.BookSheetDebug.config">
+      <DependentUpon>connectionStrings.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="Config\connectionStrings.BookSheetRelease.config">
+      <DependentUpon>connectionStrings.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="Config\connectionStrings.Debug.config">
+      <DependentUpon>connectionStrings.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="Config\connectionStrings.Release.config">
+      <DependentUpon>connectionStrings.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="Config\appSettings.Debug.config">
+      <DependentUpon>appSettings.config</DependentUpon>
+      <IsTransformFile>True</IsTransformFile>
+    </None>
+    <None Include="Properties\PublishProfiles\BookSheetDebug.pubxml" />
+    <Content Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
     <None Include="Scripts-Build\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts-Build\jquery-1.10.2.js" />
     <Content Include="Scripts-Build\jquery-1.10.2.min.js" />
@@ -332,7 +372,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
-    <None Include="Properties\PublishProfiles\BookSheetMigrator.pubxml" />
+    <None Include="Properties\PublishProfiles\BookSheetRelease.pubxml" />
     <Content Include="Scripts-Build\jquery-1.10.2.min.map" />
     <Content Include="Scripts-Build\knockout.validation.min.js.map" />
     <Content Include="Scripts-Build\underscore.min.map" />
@@ -404,6 +444,12 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
+  <PropertyGroup Label="SlowCheetah">
+    <SlowCheetahToolsPath>$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\..\packages\SlowCheetah.2.5.14\tools\))</SlowCheetahToolsPath>
+    <SlowCheetah_EnableImportFromNuGet Condition=" '$(SlowCheetah_EnableImportFromNuGet)'=='' ">true</SlowCheetah_EnableImportFromNuGet>
+    <SlowCheetah_NuGetImportPath Condition=" '$(SlowCheetah_NuGetImportPath)'=='' ">$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\Properties\SlowCheetah\SlowCheetah.Transforms.targets ))</SlowCheetah_NuGetImportPath>
+    <SlowCheetahTargets Condition=" '$(SlowCheetah_EnableImportFromNuGet)'=='true' and Exists('$(SlowCheetah_NuGetImportPath)') ">$(SlowCheetah_NuGetImportPath)</SlowCheetahTargets>
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
@@ -435,6 +481,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
+  <Import Project="$(SlowCheetahTargets)" Condition="Exists('$(SlowCheetahTargets)')" Label="SlowCheetah" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

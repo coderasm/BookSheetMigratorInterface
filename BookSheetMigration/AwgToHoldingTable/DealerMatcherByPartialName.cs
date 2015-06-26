@@ -26,7 +26,7 @@ namespace BookSheetMigration.AwgToHoldingTable
         private string firstWordFirstLetterOfSecondWord(string fullString)
         {
             var stringParts = fullString.Split(' ');
-            return stringParts[0] + stringParts[1].Substring(0, 1);
+            return stringParts[0] + " " + stringParts[1].Substring(0, 1);
         }
     }
 }
