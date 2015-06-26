@@ -69,7 +69,7 @@ namespace BookSheetMigration
         {
             foreach (var dealer in possibleEntities)
             {
-                if(dealer.companyName.Equals(Settings.BookSheetDealerCompanyName, StringComparison.OrdinalIgnoreCase))
+                if(dealer.companyName.Equals(Settings.bookSheetDealerCompanyName, StringComparison.OrdinalIgnoreCase))
                 {
                     setDealerId(dealer);
                     return;

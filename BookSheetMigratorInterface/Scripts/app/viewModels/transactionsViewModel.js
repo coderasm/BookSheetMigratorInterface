@@ -11,6 +11,7 @@
                 self.hasTransactions = ko.computed(function () {
                     return self.transactions().length > 0;
                 });
+                self.feeExceptions = [];
                 self.filter = ko.observable("");
                 self.showOnlyNew = ko.observable(false);
                 self.isNotImporting = ko.observable(true);
@@ -92,7 +93,7 @@
 
                 self.importSelected = function () {
                     var selectedTransactions = findSelectedTransactions();
-                    if (selectedTransactions.length == 0) {
+                    if (selectedTransactions.length === 0) {
                         return;
                     }
                     self.isNotImporting(false);
@@ -169,7 +170,8 @@
                                     buyerContactId: transaction.buyerContactId(),
                                     bidAmount: transaction.bidAmount(),
                                     transportFee: transaction.transportFee(),
-                                    soldDate: transaction.soldDate()
+                                    soldDate: transaction.soldDate(),
+                                    feeException: transaction.feeException()
                                 }
                             );
                         }
@@ -209,10 +211,11 @@
                 function init() {
                     ticker.server.getUnimported()
                         .done(function (data) {
-                            var mappedTransactions = $.map(data, function (item) {
+                            var mappedTransactions = $.map(data.unimported, function (item) {
                                 return new Transaction(item, transactionUri);
                             });
                             self.isLoadingTransactions(false);
+                            self.feeExceptions = data.feeExceptions;
                             self.transactions(mappedTransactions);
                         })
                         .fail(function (jqXHR, textStatus, errorThrown) {

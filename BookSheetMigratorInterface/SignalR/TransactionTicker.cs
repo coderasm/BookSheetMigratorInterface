@@ -13,7 +13,7 @@ namespace BookSheetMigratorInterface.SignalR
     {
         // Singleton instance
         private readonly static Lazy<TransactionTicker> instance = new Lazy<TransactionTicker>(() => new TransactionTicker(GlobalHost.ConnectionManager.GetHubContext<TransactionTickerHub>().Clients));
-        private readonly TimeSpan migrateInterval = Settings.timeBetweenMigrations;
+        private readonly TimeSpan migrateInterval = Settings.minutesBetweenMigrations;
         private readonly Timer timer;
         private volatile bool migratingNewTransactions = false;
         private BroadCaster broadcaster;
@@ -39,11 +39,18 @@ namespace BookSheetMigratorInterface.SignalR
             set;
         }
 
-        public async Task<List<AWGTransactionDTO>> getUnimported(string clientConnectionId)
+        public async Task<object> getUnimported(string clientConnectionId)
         {
             await migrateAndBroadcastToOthers(clientConnectionId);
             var transactionDao = new TransactionDAO();
-            return await transactionDao.getUnimported();
+            var unimported = await transactionDao.getUnimported();
+            var entityDao = new EntityDAO<dynamic>();
+            var feeExceptions = await entityDao.@select("SELECT * FROM " + Settings.ABSBookSheetFeeExceptionTable);
+            return new
+            {
+                unimported,
+                feeExceptions
+            };
         }
 
         private async void tickerDelegate(object state)

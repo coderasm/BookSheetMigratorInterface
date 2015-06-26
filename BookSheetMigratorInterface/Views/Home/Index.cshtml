@@ -47,23 +47,45 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-1">
-                                                <span class="clearfix">Year</span>
-                                                <span data-bind="text: year"></span>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <span class="clearfix">Make</span>
-                                                <span data-bind="text: make"></span>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label for="feeException" class="control-label">Fee Exception</label>
+                                                    <select name="feeException" id="feeException" class="form-control" data-bind="foreach: $parent.feeExceptions, value: feeException" size="4">
+                                                        <option data-bind="text: ExceptionDescription, value: ExceptionId"></option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-3">
-                                                <span class="clearfix">Model</span>
-                                                <span data-bind="text: model"></span>
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <div class="form-group">
+                                                            <label class="control-label">Year</label>
+                                                            <span class="clearfix" data-bind="text: year"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-9">
+                                                        <div class="form-group">
+                                                            <label class="control-label">Make</label>
+                                                            <span class="clearfix" data-bind="text: make"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label">Model</label>
+                                                            <span class="clearfix" data-bind="text: model"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-md-1">
-                                                <span class="clearfix">Mileage</span>
-                                                <span data-bind="text: mileage"></span>
+                                                <div class="form-group">
+                                                    <label class="control-label">Mileage</label>
+                                                    <span class="clearfix" data-bind="text: mileage"></span>
+                                                </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group" data-bind="validationElement: bidAmount">
@@ -78,8 +100,10 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
-                                                <span class="clearfix">VIN</span>
-                                                <span data-bind="text: vin"></span>
+                                                <div class="form-group">
+                                                    <label class="control-label">Vin</label>
+                                                    <span class="clearfix" data-bind="text: vin"></span>
+                                                </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">

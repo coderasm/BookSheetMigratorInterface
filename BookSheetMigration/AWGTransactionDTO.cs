@@ -196,6 +196,9 @@ namespace BookSheetMigration
         [Column("FailedImport")]
         public bool failedImport { get; set; }
 
+        [Column("FeeException")]
+        public bool feeException { get; set; }
+
         public override bool Equals(object obj)
         {
             AWGTransactionDTO transactionDto = obj as AWGTransactionDTO;

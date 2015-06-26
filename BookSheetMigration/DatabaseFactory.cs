@@ -6,7 +6,7 @@ namespace BookSheetMigration
     {
         internal static Database makeDatabase()
         {
-            var database = new Database(Settings.ABSProductionDbConnectionString, Settings.ABSDatabaseProviderName);
+            var database = new Database(Settings.ABSDbConnectionString, Settings.ABSDatabaseProviderName);
             database.CommandTimeout = 120;
             return database;
         }

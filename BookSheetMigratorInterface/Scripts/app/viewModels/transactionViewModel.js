@@ -12,6 +12,7 @@
                    required: true,
                    min: 1000
                });
+               self.feeException = ko.observable(data.feeException).extend({ trackChange: true });
                self.soldDate = ko.observable(data.soldDate).extend({ trackChange: true });
                self.failedImport = data.failedImport;
                self.sellerDmvNumber = data.sellerDmvNumber;

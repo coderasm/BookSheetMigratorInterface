@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using BookSheetMigration;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 
@@ -18,7 +16,7 @@ namespace BookSheetMigratorInterface.SignalR
             transactionTicker = TransactionTicker;
         }
 
-        public async Task<IEnumerable<AWGTransactionDTO>> GetUnimported()
+        public async Task<object> GetUnimported()
         {
             return await transactionTicker.getUnimported(Context.ConnectionId);
         }
