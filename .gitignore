@@ -157,3 +157,4 @@ $RECYCLE.BIN/
 Settings.cs
 BookSheetMigration/Settings.cs
 BookSheetMigratorInterface/Settings.cs
+BookSheetMigratorInterface/Config/*
