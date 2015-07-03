@@ -96,7 +96,6 @@
                     if (selectedTransactions.length === 0) {
                         return;
                     }
-                    self.isNotImporting(false);
                     var importableTransactions = findImportableInSelected(selectedTransactions);
                     importTransactions(importableTransactions);
                 }
@@ -119,6 +118,7 @@
                 function importTransactions(transactions) {
                     if (transactions.length === 0)
                         return;
+                    self.isNotImporting(false);
                     $.ajax({
                         url: transactionUri + "import",
                         type: "POST",
