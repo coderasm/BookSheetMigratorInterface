@@ -44,7 +44,7 @@ namespace BookSheetMigratorInterface.SignalR
             await migrateAndBroadcastToOthers(clientConnectionId);
             var transactionDao = new TransactionDAO();
             var unimported = await transactionDao.getUnimported();
-            var entityDao = new EntityDAO<dynamic>();
+            var entityDao = new EntityDAO<dynamic>(DatabaseFactory.makeDatabase());
             var feeExceptions = await entityDao.@select("SELECT * FROM " + Settings.ABSBookSheetFeeExceptionTable);
             return new
             {

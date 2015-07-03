@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace BookSheetMigration
@@ -7,13 +10,12 @@ namespace BookSheetMigration
     {
         protected List<T> possiblyNewRecords;
         protected EntityDAO<T> entityDao;
-        private Task[] runningTasks;
 
         protected abstract List<T> findPossiblyNewRecords();
 
         public DataMigrator()
         {
-            entityDao = new EntityDAO<T>();
+            entityDao = new EntityDAO<T>(DatabaseFactory.makeDatabase());
         } 
 
         private bool possibleRecordsToMigrateExist(List<T> possiblyNewRecords)
@@ -21,40 +23,49 @@ namespace BookSheetMigration
  	        return possiblyNewRecords.Count > 0;
         }
 
-        protected void migrateRecords()
+        protected async Task<List<T>> migrateRecords(List<T> foundRecords)
+        {
+            if (possibleRecordsToMigrateExist(foundRecords))
+            {
+                try
+                {
+                    using (var scope = await entityDao.GetTransaction())
+                    {
+                        await doBeforeMigration();
+                        var insertedEntities = await entityDao.mergeInsertOnlyShared(foundRecords, Settings.migrationBatchSize);
+                        await doAfterMigration();
+                        scope.Complete();
+                        return insertedEntities;
+                    }
+                }
+                catch (SqlException exception)
+                {
+                    Debug.WriteLine("Migration failed: " + exception.Message);
+                    return new List<T>();
+                }
+            }
+            return new List<T>();
+        }
+
+        protected virtual Task doAfterMigration()
+        {
+            return Task.Run(() => { });
+        }
+
+        protected virtual Task doBeforeMigration()
+        {
+            return Task.Run(() => { });
+        }
+
+        public async Task<List<T>> migrate()
         {
             possiblyNewRecords = findPossiblyNewRecords();
-            if (possibleRecordsToMigrateExist(possiblyNewRecords))
-            {
-                initializeRunningTasks(possiblyNewRecords.Count);
-                createAndSaveMigrationTasks();
-                Task.WaitAll(runningTasks);
-            }
+            return await migrateRecords(possiblyNewRecords);
         }
 
-        private void initializeRunningTasks(int recordCount)
+        public async Task<List<T>> migrate(List<T> foundRecords)
         {
-            runningTasks = new Task[recordCount];
-        }
-
-        private void createAndSaveMigrationTasks()
-        {
-            for (int i = 0; i < possiblyNewRecords.Count; i++)
-            {
-                var runningTask = migrateRecord(possiblyNewRecords[i]);
-                runningTasks[i] = runningTask;
-            }
-        }
-
-        public Task<object> migrateRecord(T possiblyNewRecord)
-        {
-            return entityDao.insert(possiblyNewRecord);
-        }
-
-        public List<T> migrate()
-        {
-            migrateRecords();
-            return possiblyNewRecords;
+            return await migrateRecords(foundRecords);
         }
     }
 }

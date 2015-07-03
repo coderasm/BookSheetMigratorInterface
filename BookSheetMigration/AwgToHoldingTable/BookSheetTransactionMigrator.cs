@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BookSheetMigration.AwgToHoldingTable;
 
 namespace BookSheetMigration
@@ -8,16 +9,23 @@ namespace BookSheetMigration
     {
         private const string dateFormat = "yyyy-MM-dd HH:mm:ss";
         private DateTime lastDayAnEventIsSearchable = DateTime.Now.AddDays(-Settings.daysBeforeToday);
+        private List<AWGEventDTO> liveEvents;
+        private DateTime lastMigrated;
+        private EntityDAO<AWGEventDTO> eventDao;
+
+        public BookSheetTransactionMigrator()
+        {
+            eventDao = new EntityDAO<AWGEventDTO>(entityDao.database);
+        }
 
         protected override List<AWGTransactionDTO> findPossiblyNewRecords()
         {
-            var liveEvents = findEventsNotExpiredBy(lastDayAnEventIsSearchable);
+            liveEvents = findEventsNotExpiredBy(lastDayAnEventIsSearchable);
             return findSalesInEvents(liveEvents);
         }
 
         private List<AWGEventDTO> findEventsNotExpiredBy(DateTime day)
         {
-            var eventDao = createEventDao();
             var query = "SELECT * FROM " + Settings.ABSBookSheetEventTable + " WHERE EndTime >= '" + day.ToString(dateFormat) + "'";
             return eventDao.@select(query).Result;
         }
@@ -25,22 +33,20 @@ namespace BookSheetMigration
         private List<AWGTransactionDTO> findSalesInEvents(List<AWGEventDTO> liveEvents)
         {
             var allTransactions = new List<AWGTransactionDTO>();
+            lastMigrated = findEndDate(DateTime.Now);
             foreach (var awgEvent in liveEvents)
             {
-                var transactions = findTransactionsForEvent(awgEvent);
+                var transactions = findTransactionsForEvent(awgEvent, lastMigrated);
                 insertIdsIntoTransactions(transactions, awgEvent.eventId);
                 allTransactions.AddRange(transactions);
             }
             return allTransactions;
         }
 
-        private List<AWGTransactionDTO> findTransactionsForEvent(AWGEventDTO awgEvent)
+        private List<AWGTransactionDTO> findTransactionsForEvent(AWGEventDTO awgEvent, DateTime endDate)
         {
             var serviceClient = new AWGServiceClient();
             var startDate = findStartDate(awgEvent);
-            var now = DateTime.Now;
-            var endDate = findEndDate(now);
-            updateLastMigratedForEvent(awgEvent, now);
             return serviceClient.findTransactionsByStatusDateRangeAndId(TransactionStatus.New, startDate, endDate, awgEvent.eventId);
         }
 
@@ -59,13 +65,6 @@ namespace BookSheetMigration
         private bool isAfterOrEqualToLastHour(int hourDifference)
         {
             return hourDifference <= 0;
-        }
-
-        private async void updateLastMigratedForEvent(AWGEventDTO awgEvent, DateTime now)
-        {
-            var eventDao = createEventDao();
-            awgEvent.lastMigrated = now;
-            await eventDao.update(awgEvent, new List<string>() { "LastMigrated" });
         }
 
         private List<AWGTransactionDTO> insertIdsIntoTransactions(List<AWGTransactionDTO> transactions, int id)
@@ -150,9 +149,27 @@ namespace BookSheetMigration
             buyerContactIdInserter.insertIdIfFound();
         }
 
-        private EntityDAO<AWGEventDTO> createEventDao()
+        protected override Task doAfterMigration()
         {
-            return new EntityDAO<AWGEventDTO>();
+            base.doAfterMigration();
+            return updateLastMigratedForEvents();
+        }
+
+        private Task updateLastMigratedForEvents()
+        {
+            return Task.Run(async() =>
+            {
+                foreach (var liveEvent in liveEvents)
+                {
+                    await updateLastMigratedForEvent(liveEvent);
+                }
+            });
+        }
+
+        private Task<int> updateLastMigratedForEvent(AWGEventDTO awgEvent)
+        {
+            awgEvent.lastMigrated = lastMigrated;
+            return eventDao.updateShared(awgEvent, new List<string>() { "LastMigrated" });
         }
     }
 }

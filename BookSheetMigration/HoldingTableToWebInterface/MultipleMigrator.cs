@@ -13,21 +13,21 @@ namespace BookSheetMigration.HoldingTableToWebInterface
 
         private Task migrateEvents()
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 DataMigrator<AWGEventDTO> upcomingEventMigrator = new BookSheetEventMigrator(EventStatus.Upcoming);
-                upcomingEventMigrator.migrate();
+                await upcomingEventMigrator.migrate();
                 DataMigrator<AWGEventDTO> inprogressEventMigrator = new BookSheetEventMigrator(EventStatus.InProgress);
-                inprogressEventMigrator.migrate();
+                await inprogressEventMigrator.migrate();
             });
         }
 
         private Task<List<AWGTransactionDTO>> migrateTransactions()
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 DataMigrator<AWGTransactionDTO> transactionMigrator = new BookSheetTransactionMigrator();
-                return transactionMigrator.migrate();
+                return await transactionMigrator.migrate();
             });
         }
     }

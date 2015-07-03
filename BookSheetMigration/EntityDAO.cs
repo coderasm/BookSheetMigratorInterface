@@ -6,6 +6,18 @@ namespace BookSheetMigration
 {
     public class EntityDAO<T>
     {
+        public Database database { get; private set; }
+
+        public EntityDAO(Database database)
+        {
+            this.database = database;
+        }
+
+        public async Task<ITransaction> GetTransaction()
+        {
+            return await database.GetTransactionAsync();
+        }
+
         private Database createConnection()
         {
             return DatabaseFactory.makeDatabase();
@@ -36,13 +48,26 @@ namespace BookSheetMigration
             }
         }
 
+        public async Task<List<T>> selectShared(Sql sql)
+        {
+            return await database.FetchAsync<T>(sql);
+        }
+
+        public async Task<List<T>> selectShared(string sql)
+        {
+            return await database.FetchAsync<T>(sql);
+        }
+
+        public async Task<List<T>> selectShared(string sql, params object[] sqlparams)
+        {
+            return await database.FetchAsync<T>(sql, sqlparams);
+        }
+
         public async Task<int> update(T entity)
         {
             using (var databaseConnection = createConnection())
             {
-                if (await exists(entity))
-                    return await databaseConnection.UpdateAsync(entity);
-                return 0;
+                 return await databaseConnection.UpdateAsync(entity);
             }
         }
 
@@ -50,20 +75,44 @@ namespace BookSheetMigration
         {
             using (var databaseConnection = createConnection())
             {
-                if (await exists(entity))
-                    return await databaseConnection.UpdateAsync(entity, columns);
-                return 0;
+                return await databaseConnection.UpdateAsync(entity, columns);
             }
+        }
+
+        public async Task<int> updateShared(T entity)
+        {
+            return await database.UpdateAsync(entity);
+        }
+
+        public async Task<int> updateShared(T entity, IEnumerable<string> columns)
+        {
+            return await database.UpdateAsync(entity, columns);
         }
 
         public async Task<object> insert(T entity)
         {
             using (var databaseConnection = createConnection())
             {
-                if (!await exists(entity))
-                    return await databaseConnection.InsertAsync(entity);
-                return 0;
+                return await databaseConnection.InsertAsync(entity);
             }
+        }
+
+        public async Task<object> insertShared(T entity)
+        {
+            return await database.InsertAsync(entity);
+        }
+
+        public async Task<List<T>> mergeInsertOnly(List<T> pocos, int batchSize = 25)
+        {
+            using (var databaseConnection = createConnection())
+            {
+                return await databaseConnection.MergeInsertOnly(pocos, batchSize);
+            } 
+        }
+
+        public async Task<List<T>> mergeInsertOnlyShared(List<T> pocos, int batchSize = 25)
+        {
+            return await database.MergeInsertOnly(pocos, batchSize);
         }
 
         public async Task<bool> exists(T entity)

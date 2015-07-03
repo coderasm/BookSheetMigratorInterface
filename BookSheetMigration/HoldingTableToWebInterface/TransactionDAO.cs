@@ -9,11 +9,11 @@ namespace BookSheetMigration.HoldingTableToWebInterface
 {
     public class TransactionDAO
     {
+        private EntityDAO<AWGTransactionDTO> entityDao = new EntityDAO<AWGTransactionDTO>(DatabaseFactory.makeDatabase());
 
         public async Task<List<AWGTransactionDTO>> getAll()
         {
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
-            var query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable;
+            const string query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable;
             var transactions = await entityDao.@select(query);
             await attachDealersAndContactsTo(transactions);
             return transactions;
@@ -21,7 +21,6 @@ namespace BookSheetMigration.HoldingTableToWebInterface
 
         public async Task<List<AWGTransactionDTO>> get(int eventId, int transactionId)
         {
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
             var query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE EventId=" + eventId + " AND TransactionId=" + transactionId;
             var transactions = await entityDao.@select(query);
             await attachDealersAndContactsTo(transactions);
@@ -30,8 +29,7 @@ namespace BookSheetMigration.HoldingTableToWebInterface
 
         public async Task<List<AWGTransactionDTO>> getUnimported()
         {
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
-            var query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL";
+            const string query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL";
             var transactions = await entityDao.@select(query);
             await attachDealersAndContactsTo(transactions);
             return transactions;
@@ -39,8 +37,7 @@ namespace BookSheetMigration.HoldingTableToWebInterface
 
         public async Task<List<AWGTransactionDTO>> getImported()
         {
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
-            var query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NOT NULL";
+            const string query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NOT NULL";
             var transactions = await entityDao.@select(query);
             await attachDealersAndContactsTo(transactions);
             return transactions;
@@ -48,7 +45,6 @@ namespace BookSheetMigration.HoldingTableToWebInterface
 
         public async Task<List<AWGTransactionDTO>> getImported(int eventId, int transactionId)
         {
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
             var query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NOT NULL AND EventId=" + eventId + " AND TransactionId=" + transactionId;
             var transactions = await entityDao.@select(query);
             await attachDealersAndContactsTo(transactions);
@@ -83,7 +79,6 @@ namespace BookSheetMigration.HoldingTableToWebInterface
 
         public async Task<List<AWGTransactionDTO>> getUnimported(int eventId, int transactionId)
         {
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
             var query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL AND EventId=" + eventId + " AND TransactionId=" + transactionId;
             var transactions = await entityDao.@select(query);
             await attachDealersAndContactsTo(transactions);
@@ -130,14 +125,12 @@ namespace BookSheetMigration.HoldingTableToWebInterface
 
         private async Task markTransactionAsImported(AWGTransactionDTO transaction)
         {
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
             transaction.imported = DateTime.Now;
             await entityDao.update(transaction, new List<string>() { "Imported" });
         }
 
         private async Task markTransactionAsFailedImport(AWGTransactionDTO transaction)
         {
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
             transaction.failedImport = true;
             await entityDao.update(transaction, new List<string>() { "FailedImport" });
         }
@@ -146,7 +139,6 @@ namespace BookSheetMigration.HoldingTableToWebInterface
         {
             var columns = extractUpdateColumns(json.Value<JObject>());
             var transaction = json.ToObject<AWGTransactionDTO>();
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
             var result = await entityDao.update(transaction, columns);
             if (result != 0)
             {
@@ -177,11 +169,10 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             var transaction = json.ToObject<AWGTransactionDTO>();
             transaction.eventId = eventId;
             transaction.transactionId = transactionId;
-            var entityDao = new EntityDAO<AWGTransactionDTO>();
             return await entityDao.update(transaction, columns);
         }
 
-        private List<string> extractUpdateColumns(JObject jObject)
+        private IEnumerable<string> extractUpdateColumns(JObject jObject)
         {
             var idList = new List<string>() { "eventid", "transactionid" };
             return jObject.Properties().Where(p => !idList.Contains(p.Name.ToLower()))

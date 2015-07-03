@@ -9,7 +9,7 @@ namespace BookSheetMigration
 
         public async Task<List<T>> find()
         {
-            var entityDao = new EntityDAO<T>();
+            var entityDao = new EntityDAO<T>(DatabaseFactory.makeDatabase());
             return await entityDao.@select(query);
         }
 

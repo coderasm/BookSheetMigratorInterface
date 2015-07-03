@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BookSheetMigration.Test
@@ -14,9 +15,8 @@ namespace BookSheetMigration.Test
             myEvent.endTime = DateTime.Now;
 
             DataMigrator<AWGEventDTO> bookSheetUpcomingEventMigrator = new BookSheetEventMigrator(EventStatus.Upcoming);
-            var migrationTask = bookSheetUpcomingEventMigrator.migrateRecord(myEvent);
-            migrationTask.Wait();
-            Assert.IsTrue(migrationTask.IsCompleted);
+            var migratedEvents = bookSheetUpcomingEventMigrator.migrate(new List<AWGEventDTO>(){myEvent}).Result;
+            Assert.AreEqual(1, migratedEvents.Count);
         }
     }
 }
