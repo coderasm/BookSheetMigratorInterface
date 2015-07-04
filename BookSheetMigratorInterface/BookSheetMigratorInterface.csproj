@@ -340,6 +340,10 @@
     <Content Include="Scripts\app\extenders\changeTracking.js" />
     <Content Include="Scripts\app\common\pausableComputed.js" />
     <Content Include="Scripts\app\utilities\utilities.js" />
+    <Content Include="Scripts\app\viewModels\bulkAjaxOperation.js" />
+    <Content Include="Scripts\app\viewModels\bulkImportAjaxOperation.js" />
+    <Content Include="Scripts\app\viewModels\bulkOperation.js" />
+    <Content Include="Scripts\app\viewModels\bulkUpdateAjaxOperation.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.min.js" />
     <Content Include="Scripts\domReady.js" />

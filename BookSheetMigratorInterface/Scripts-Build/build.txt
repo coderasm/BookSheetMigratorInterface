@@ -12,6 +12,10 @@ app/extenders/changeTracking.js
 knockout.validation.js
 app/configurations/validation.js
 app/viewModels/transactionViewModel.js
+app/viewModels/bulkOperation.js
+app/viewModels/bulkAjaxOperation.js
+app/viewModels/bulkUpdateAjaxOperation.js
+app/viewModels/bulkImportAjaxOperation.js
 bootstrap.js
 respond.js
 app/bindings/isLoadingWhen.js

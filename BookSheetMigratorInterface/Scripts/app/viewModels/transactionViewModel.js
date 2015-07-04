@@ -101,7 +101,7 @@
                });
 
                self.update = function (formElement) {
-                   if (!self.isValidateUpdate())
+                   if (!self.isValidUpdate())
                        return;
                    var postData = $(formElement).formToJSON();
                    $.ajax({
@@ -119,7 +119,7 @@
                    });
                }
 
-               self.isValidateUpdate = function() {
+               self.isValidUpdate = function() {
                    clearAlerts();
                    if (!self.isDirty()) {
                        self.error("Nothing to update.");

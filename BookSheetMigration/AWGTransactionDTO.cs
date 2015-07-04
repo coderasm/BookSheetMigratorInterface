@@ -197,7 +197,7 @@ namespace BookSheetMigration
         public bool failedImport { get; set; }
 
         [Column("FeeException")]
-        public bool feeException { get; set; }
+        public int feeException { get; set; }
 
         public override bool Equals(object obj)
         {
