@@ -2,14 +2,7 @@
     function BulkOperation() {
     }
 
-    BulkOperation.prototype.viewModel = {};
-
     BulkOperation.prototype.selectedItems = [];
-
-    BulkOperation.prototype.initialize = function(selectedItems, viewModel) {
-        this.selectedItems = selectedItems;
-        this.viewModel = viewModel;
-    }
 
     BulkOperation.prototype.execute = function () {
         if (this.selectedItems.length === 0)

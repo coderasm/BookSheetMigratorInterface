@@ -22,6 +22,7 @@
             }
         });
     }
+    BulkAjaxOperation.prototype.viewModel = {};
     BulkAjaxOperation.prototype.operation = "";
     BulkAjaxOperation.prototype.method = "";
     BulkAjaxOperation.prototype.onAjaxSuccess = function(data) {

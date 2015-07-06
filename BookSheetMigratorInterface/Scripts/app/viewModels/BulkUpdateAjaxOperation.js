@@ -5,7 +5,8 @@
         var self = this;
         self.operation = "bulk-update";
         self.method = "PUT";
-        self.initialize(selectedItems, viewModel);
+        self.selectedItems = selectedItems;
+        self.viewModel = viewModel;
         self.isProcessable = function(item) {
             return item.updateable() && item.isValidUpdate();
         }

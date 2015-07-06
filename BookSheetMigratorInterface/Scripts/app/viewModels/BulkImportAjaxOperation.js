@@ -5,7 +5,8 @@
         var self = this;
         self.operation = "import";
         self.method = "POST";
-        self.initialize(selectedItems, viewModel);
+        self.selectedItems = selectedItems;
+        self.viewModel = viewModel;
         self.isProcessable = function (item) {
             return item.importable() && item.isValidImport();
         }
