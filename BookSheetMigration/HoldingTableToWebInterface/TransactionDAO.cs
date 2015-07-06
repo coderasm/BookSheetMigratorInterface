@@ -15,48 +15,43 @@ namespace BookSheetMigration.HoldingTableToWebInterface
         {
             const string query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable;
             var transactions = await entityDao.@select(query);
-            await attachDealersAndContactsTo(transactions);
-            return transactions;
+            return await attachDealersAndContactsTo(transactions);
         }
 
         public async Task<List<AWGTransactionDTO>> get(int eventId, int transactionId)
         {
             var query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE EventId=" + eventId + " AND TransactionId=" + transactionId;
             var transactions = await entityDao.@select(query);
-            await attachDealersAndContactsTo(transactions);
-            return transactions;
+            return await attachDealersAndContactsTo(transactions);
         }
 
-        public async Task<List<AWGTransactionDTO>> getUnimported()
+        public async Task<List<AWGTransactionDTO>> getUnimportedWithReferences()
         {
             const string query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL";
             var transactions = await entityDao.@select(query);
-            await attachDealersAndContactsTo(transactions);
-            return transactions;
+            return await attachDealersAndContactsTo(transactions);
         }
 
         public async Task<List<AWGTransactionDTO>> getImported()
         {
             const string query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NOT NULL";
             var transactions = await entityDao.@select(query);
-            await attachDealersAndContactsTo(transactions);
-            return transactions;
+            return await attachDealersAndContactsTo(transactions);
         }
 
         public async Task<List<AWGTransactionDTO>> getImported(int eventId, int transactionId)
         {
             var query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NOT NULL AND EventId=" + eventId + " AND TransactionId=" + transactionId;
             var transactions = await entityDao.@select(query);
-            await attachDealersAndContactsTo(transactions);
-            return transactions;
+            return await attachDealersAndContactsTo(transactions);
         }
 
-        public Task attachDealersAndContactsTo(List<AWGTransactionDTO> transactions)
+        public Task<List<AWGTransactionDTO>> attachDealersAndContactsTo(List<AWGTransactionDTO> transactions)
         {
             return Task.Run(() =>
             {
                 var transactionCollectionLoader = new TransactionCollectionLoader(transactions);
-                transactionCollectionLoader.loadDependentCollections();
+                return transactionCollectionLoader.loadDependentCollections();
             });
         }
 
@@ -80,9 +75,13 @@ namespace BookSheetMigration.HoldingTableToWebInterface
         public async Task<List<AWGTransactionDTO>> getUnimported(int eventId, int transactionId)
         {
             var query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL AND EventId=" + eventId + " AND TransactionId=" + transactionId;
-            var transactions = await entityDao.@select(query);
-            await attachDealersAndContactsTo(transactions);
-            return transactions;
+            return await entityDao.@select(query);
+        }
+
+        public async Task<List<AWGTransactionDTO>> getUnimportedWithReferences(int eventId, int transactionId)
+        {
+            var transactions = await getUnimported(eventId, transactionId);
+            return await attachDealersAndContactsTo(transactions);
         }
 
         private async Task<object> import(AWGTransactionDTO transaction)
@@ -120,6 +119,7 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             sql.Append(", @@pBid = @0", transaction.bidAmount);
             sql.Append(", @@SoldDT = @0", transaction.soldDate);
             sql.Append(", @@Trans = @0", transaction.transportFee);
+            //sql.Append(", @@FeeException = @0", transaction.feeException);
             return sql;
         }
 

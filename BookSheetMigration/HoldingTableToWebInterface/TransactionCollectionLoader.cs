@@ -11,11 +11,12 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             this.transactions = transactions;
         }
 
-        public void loadDependentCollections()
+        public List<AWGTransactionDTO> loadDependentCollections()
         {
             findAndAttachSellingDealersForTransactions(transactions);
             findAndAttachBuyingDealersForTransactions(transactions);
             findAndAttachAllBuyingDealersContactsForTransactions(transactions);
+            return transactions;
         }
 
         private void findAndAttachSellingDealersForTransactions(List<AWGTransactionDTO> transactions)

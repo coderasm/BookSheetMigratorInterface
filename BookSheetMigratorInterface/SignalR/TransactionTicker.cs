@@ -43,7 +43,7 @@ namespace BookSheetMigratorInterface.SignalR
         {
             await migrateAndBroadcastToOthers(clientConnectionId);
             var transactionDao = new TransactionDAO();
-            var unimported = await transactionDao.getUnimported();
+            var unimported = await transactionDao.getUnimportedWithReferences();
             var entityDao = new EntityDAO<dynamic>(DatabaseFactory.makeDatabase());
             var feeExceptions = await entityDao.@select("SELECT * FROM " + Settings.ABSBookSheetFeeExceptionTable);
             return new
@@ -91,8 +91,7 @@ namespace BookSheetMigratorInterface.SignalR
         {
             var transactions = await migrateAndReturnNewTransactions();
             var transactionDao = new TransactionDAO();
-            await transactionDao.attachDealersAndContactsTo(transactions);
-            return transactions;
+            return await transactionDao.attachDealersAndContactsTo(transactions);
         }
 
         private async Task<List<AWGTransactionDTO>>  migrateAndReturnNewTransactions()

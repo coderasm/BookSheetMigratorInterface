@@ -64,7 +64,7 @@ namespace BookSheetMigratorInterface.Controllers
         public async Task<IEnumerable<AWGTransactionDTO>> GetUnimported()
         {
             var transactionDao = new TransactionDAO();
-            return await transactionDao.getUnimported();
+            return await transactionDao.getUnimportedWithReferences();
         }
 
         // GET: api/Transaction/unimported/eventId/transactionId
@@ -72,7 +72,7 @@ namespace BookSheetMigratorInterface.Controllers
         public async Task<IEnumerable<AWGTransactionDTO>> GetUnimported(int eventId, int transactionId)
         {
             var transactionDao = new TransactionDAO();
-            return await transactionDao.getUnimported(eventId, transactionId);
+            return await transactionDao.getUnimportedWithReferences(eventId, transactionId);
         }
 
         // PUT: api/Transaction/bulk-update

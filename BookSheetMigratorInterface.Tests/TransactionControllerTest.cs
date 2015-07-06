@@ -21,7 +21,7 @@ namespace BookSheetMigratorInterface.Tests
         public void WhenAskingForUnimportedEvents_ANonZeroAmountIsReturned()
         {
             var transactionDao = new TransactionDAO();
-            var unimportedTransactions = transactionDao.getUnimported().Result;
+            var unimportedTransactions = transactionDao.getUnimportedWithReferences().Result;
             Assert.AreEqual(50, unimportedTransactions.Count);
         }
 
