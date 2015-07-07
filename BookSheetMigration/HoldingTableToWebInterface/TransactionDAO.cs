@@ -119,7 +119,7 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             sql.Append(", @@pBid = @0", transaction.bidAmount);
             sql.Append(", @@SoldDT = @0", transaction.soldDate);
             sql.Append(", @@Trans = @0", transaction.transportFee);
-            //sql.Append(", @@FeeException = @0", transaction.feeException);
+            sql.Append(", @@FeeStatus = @0", transaction.feeException);
             return sql;
         }
 
