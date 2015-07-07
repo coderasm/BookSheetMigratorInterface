@@ -119,6 +119,7 @@
     <Compile Include="HoldingTableToWebInterface\TransactionCollectionLoader.cs" />
     <Compile Include="HoldingTableToWebInterface\TransactionDAO.cs" />
     <Compile Include="StringManipulation\LeadingArticleConjunctionPrepositionRemover.cs" />
+    <Compile Include="StringManipulation\LeadingZeroRemover.cs" />
     <Compile Include="StringManipulation\StringCleaner.cs" />
     <Compile Include="NonEntityDAO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
