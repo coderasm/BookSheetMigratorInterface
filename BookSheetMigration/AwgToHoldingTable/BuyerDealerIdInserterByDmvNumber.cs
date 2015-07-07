@@ -18,7 +18,7 @@ namespace BookSheetMigration
         {
             var leadingZeroRemover = new LeadingZeroRemover(dmvNumber);
             var dmvNumberWithoutZeros = leadingZeroRemover.remove();
-            return dmvNumberWithoutZeros.Length > 2;
+            return dmvNumberWithoutZeros.Length > Settings.minimumDmvNumberLength;
         }
 
         protected override DealersFinder findPotentialBuyerDealers()
