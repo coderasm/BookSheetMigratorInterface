@@ -26,11 +26,11 @@ namespace BookSheetMigratorInterface.Controllers
         {
             foreach (var item in items)
             {
-                await processItemsAndReturnResult(item);
+                await processItemAndReturnResult(item);
             }
         }
 
-        private async Task processItemsAndReturnResult(T item)
+        private async Task processItemAndReturnResult(T item)
         {
             var result = await process(item);
             results.Add(result);
