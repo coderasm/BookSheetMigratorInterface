@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AsyncPoco;
@@ -9,7 +11,7 @@ namespace BookSheetMigration.HoldingTableToWebInterface
 {
     public class TransactionDAO
     {
-        private EntityDAO<AWGTransactionDTO> entityDao = new EntityDAO<AWGTransactionDTO>(DatabaseFactory.makeDatabase());
+        private readonly EntityDAO<AWGTransactionDTO> entityDao = new EntityDAO<AWGTransactionDTO>(DatabaseFactory.makeDatabase());
 
         public async Task<List<AWGTransactionDTO>> getAll()
         {
@@ -57,14 +59,24 @@ namespace BookSheetMigration.HoldingTableToWebInterface
 
         public async Task<object> import(int eventId, int transactionId)
         {
-            var transactionsFound = await getUnimported(eventId, transactionId);
-            if (isAlreadyImported(transactionsFound))
-                return new
+            try
+            {
+                using (var scope = await entityDao.GetTransaction())
                 {
-                    success = false,
-                    message = "Already Imported."
-                };
-            return await import(transactionsFound[0]);
+                    var transactionsFound = await getUnimported(eventId, transactionId);
+                    if (isAlreadyImported(transactionsFound))
+                        return new { success = false, message = "Already Imported." };
+                    await import(transactionsFound[0]);
+                    scope.Complete();
+                    return new { success = true, message = "Imported Successfully. I will disappear in 1 minute." };
+                }
+            }
+            catch (SqlException exception)
+            {
+                Debug.WriteLine("Import failed: " + exception.Message);
+                markTransactionAsFailedImport(eventId, transactionId);
+                return new { success = false, message = "Import Failed. See I.T."};
+            }
         }
 
         private bool isAlreadyImported(List<AWGTransactionDTO> transactionsFound)
@@ -75,7 +87,7 @@ namespace BookSheetMigration.HoldingTableToWebInterface
         public async Task<List<AWGTransactionDTO>> getUnimported(int eventId, int transactionId)
         {
             var query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL AND EventId=" + eventId + " AND TransactionId=" + transactionId;
-            return await entityDao.@select(query);
+            return await entityDao.selectShared(query);
         }
 
         public async Task<List<AWGTransactionDTO>> getUnimportedWithReferences(int eventId, int transactionId)
@@ -84,26 +96,12 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             return await attachDealersAndContactsTo(transactions);
         }
 
-        private async Task<object> import(AWGTransactionDTO transaction)
+        private async Task import(AWGTransactionDTO transaction)
         {
             var sql = buildAndReturnImportQuery(transaction);
-            var nonEntityDao = new NonEntityDAO();
-            var result = await nonEntityDao.executeScalar(sql);
-            if (result != 0)
-            {
-                await markTransactionAsImported(transaction);
-                return new
-                {
-                    success = true,
-                    message = "Imported Successfully. I will disappear in 1 minute."
-                };
-            }
-            await markTransactionAsFailedImport(transaction);
-            return new
-            {
-                success = false,
-                message = "Import Failed. See I.T."
-            };
+            var nonEntityDao = new NonEntityDAO(entityDao.database);
+            await nonEntityDao.executeScalarShared(sql);
+            await markTransactionAsImported(transaction);
         }
 
         private Sql buildAndReturnImportQuery(AWGTransactionDTO transaction)
@@ -126,12 +124,12 @@ namespace BookSheetMigration.HoldingTableToWebInterface
         private async Task markTransactionAsImported(AWGTransactionDTO transaction)
         {
             transaction.imported = DateTime.Now;
-            await entityDao.update(transaction, new List<string>() { "Imported" });
+            await entityDao.updateShared(transaction, new List<string>() { "Imported" });
         }
 
-        private async Task markTransactionAsFailedImport(AWGTransactionDTO transaction)
+        private async void markTransactionAsFailedImport(int eventId, int transactionId)
         {
-            transaction.failedImport = true;
+            var transaction = new AWGTransactionDTO() {eventId = eventId, transactionId = transactionId, failedImport = true};
             await entityDao.update(transaction, new List<string>() { "FailedImport" });
         }
 
@@ -146,17 +144,19 @@ namespace BookSheetMigration.HoldingTableToWebInterface
                 {
                     transaction.eventId,
                     transaction.transactionId,
-                    result = new {
+                    result = new
+                    {
                         success = true,
                         message = "Updated Successfully"
-                        }
+                    }
                 };
             }
             return new
             {
                 transaction.eventId,
                 transaction.transactionId,
-                result = new {
+                result = new
+                {
                     success = false,
                     message = "Update Failed. See I.T."
                 }
