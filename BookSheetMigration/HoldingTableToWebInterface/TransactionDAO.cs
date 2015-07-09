@@ -27,13 +27,6 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             return await attachDealersAndContactsTo(transactions);
         }
 
-        public async Task<List<AWGTransactionDTO>> getUnimportedWithReferences()
-        {
-            const string query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL";
-            var transactions = await entityDao.@select(query);
-            return await attachDealersAndContactsTo(transactions);
-        }
-
         public async Task<List<AWGTransactionDTO>> getImported()
         {
             const string query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NOT NULL";
@@ -93,6 +86,13 @@ namespace BookSheetMigration.HoldingTableToWebInterface
         public async Task<List<AWGTransactionDTO>> getUnimportedWithReferences(int eventId, int transactionId)
         {
             var transactions = await getUnimported(eventId, transactionId);
+            return await attachDealersAndContactsTo(transactions);
+        }
+
+        public async Task<List<AWGTransactionDTO>> getUnimportedWithReferences()
+        {
+            const string query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL";
+            var transactions = await entityDao.@select(query);
             return await attachDealersAndContactsTo(transactions);
         }
 

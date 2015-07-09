@@ -8,10 +8,13 @@ namespace BookSheetMigration
     public class BookSheetTransactionMigrator : DataMigrator<AWGTransactionDTO>
     {
         private const string dateFormat = "yyyy-MM-dd HH:mm:ss";
-        private DateTime lastDayAnEventIsSearchable = DateTime.Now.AddDays(-Settings.daysBeforeToday);
+        private DateTime lastDayAnEventIsSearchable = DateTime.Today.AddDays(-Settings.daysBeforeToday);
         private List<AWGEventDTO> liveEvents;
-        private DateTime lastMigrated;
+        private DateTime rightNow = DateTime.Now;
         private EntityDAO<AWGEventDTO> eventDao;
+        private List<AWGTransactionDTO> allTransactions = new List<AWGTransactionDTO>();
+        private DateTime todaysOpeningDate = DateTime.Today.AddHours(Settings.openingHourOfWorkDay);
+        private DateTime todaysEndingDate = DateTime.Today.AddHours(Settings.endingHourOfWorkDay);
 
         public BookSheetTransactionMigrator()
         {
@@ -32,15 +35,19 @@ namespace BookSheetMigration
 
         private List<AWGTransactionDTO> findSalesInEvents(List<AWGEventDTO> liveEvents)
         {
-            var allTransactions = new List<AWGTransactionDTO>();
-            lastMigrated = findEndDate(DateTime.Now);
+            var endDate = findEndDate();
             foreach (var awgEvent in liveEvents)
             {
-                var transactions = findTransactionsForEvent(awgEvent, lastMigrated);
-                insertIdsIntoTransactions(transactions, awgEvent.eventId);
-                allTransactions.AddRange(transactions);
+                findTransactionsAndInsertIds(awgEvent, endDate);
             }
             return allTransactions;
+        }
+
+        private void findTransactionsAndInsertIds(AWGEventDTO awgEvent, DateTime endDate)
+        {
+            var transactions = findTransactionsForEvent(awgEvent, endDate);
+            insertIdsIntoTransactions(transactions, awgEvent.eventId);
+            allTransactions.AddRange(transactions);
         }
 
         private List<AWGTransactionDTO> findTransactionsForEvent(AWGEventDTO awgEvent, DateTime endDate)
@@ -52,19 +59,31 @@ namespace BookSheetMigration
 
         private DateTime findStartDate(AWGEventDTO awgEvent)
         {
-            return awgEvent.lastMigrated == null ? awgEvent.startTime : awgEvent.lastMigrated.Value;
+            if (neverMigratedSalesFrom(awgEvent))
+                return awgEvent.startTime;
+            return determineStartDate(awgEvent);
         }
 
-        private DateTime findEndDate(DateTime now)
+        private bool neverMigratedSalesFrom(AWGEventDTO awgEvent)
         {
-            var endHour = Settings.migrationRangeEndHour;
-            var hourDifference = endHour - now.Hour;
-            return isAfterOrEqualToLastHour(hourDifference) ? now : now.AddHours(hourDifference);
+            return awgEvent.lastMigrated == null;
         }
 
-        private bool isAfterOrEqualToLastHour(int hourDifference)
+        private DateTime determineStartDate(AWGEventDTO awgEvent)
         {
-            return hourDifference <= 0;
+            if (lastMigratedBeforeToday(awgEvent))
+                return awgEvent.lastMigrated.Value;
+            return todaysOpeningDate;
+        }
+
+        private bool lastMigratedBeforeToday(AWGEventDTO awgEvent)
+        {
+            return awgEvent.lastMigrated < todaysOpeningDate;
+        }
+
+        private DateTime findEndDate()
+        {
+            return todaysEndingDate > rightNow ? todaysEndingDate : rightNow;
         }
 
         private List<AWGTransactionDTO> insertIdsIntoTransactions(List<AWGTransactionDTO> transactions, int id)
@@ -168,7 +187,7 @@ namespace BookSheetMigration
 
         private Task<int> updateLastMigratedForEvent(AWGEventDTO awgEvent)
         {
-            awgEvent.lastMigrated = lastMigrated;
+            awgEvent.lastMigrated = rightNow;
             return eventDao.updateShared(awgEvent, new List<string>() { "LastMigrated" });
         }
     }
