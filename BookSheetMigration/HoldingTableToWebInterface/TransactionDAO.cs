@@ -56,10 +56,8 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             {
                 using (var scope = await entityDao.GetTransaction())
                 {
-                    var transactionsFound = await getUnimported(eventId, transactionId);
-                    if (isAlreadyImported(transactionsFound))
-                        return new { success = false, message = "Already Imported." };
-                    await import(transactionsFound[0]);
+                    if (!await didImport(eventId, transactionId))
+                        return new { success = false, message = "Already imported." };
                     scope.Complete();
                     return new { success = true, message = "Imported Successfully. I will disappear in 1 minute." };
                 }
@@ -70,6 +68,15 @@ namespace BookSheetMigration.HoldingTableToWebInterface
                 markTransactionAsFailedImport(eventId, transactionId);
                 return new { success = false, message = "Import Failed. See I.T."};
             }
+        }
+
+        private async Task<bool> didImport(int eventId, int transactionId)
+        {
+            var transactionsFound = await getUnimported(eventId, transactionId);
+            if (isAlreadyImported(transactionsFound))
+                return false;
+            await import(transactionsFound[0]);
+            return true;
         }
 
         private bool isAlreadyImported(List<AWGTransactionDTO> transactionsFound)
@@ -139,18 +146,26 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             var transaction = json.ToObject<AWGTransactionDTO>();
             var result = await entityDao.update(transaction, columns);
             if (result != 0)
+                return returnSucces(transaction);
+            return returnFailure(transaction);
+        }
+
+        private object returnSucces(AWGTransactionDTO transaction)
+        {
+            return new
             {
-                return new
+                transaction.eventId,
+                transaction.transactionId,
+                result = new
                 {
-                    transaction.eventId,
-                    transaction.transactionId,
-                    result = new
-                    {
-                        success = true,
-                        message = "Updated Successfully"
-                    }
-                };
-            }
+                    success = true,
+                    message = "Updated Successfully"
+                }
+            };
+        }
+
+        private object returnFailure(AWGTransactionDTO transaction)
+        {
             return new
             {
                 transaction.eventId,
