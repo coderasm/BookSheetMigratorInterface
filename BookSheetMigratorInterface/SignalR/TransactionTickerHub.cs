@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 
@@ -14,6 +15,11 @@ namespace BookSheetMigratorInterface.SignalR
         private TransactionTickerHub(TransactionTicker TransactionTicker)
         {
             transactionTicker = TransactionTicker;
+        }
+
+        public async Task MigrateAndBroadcastToAll(DateTime beginSoldDate, DateTime endSoldDate)
+        {
+            await transactionTicker.migrateAndBroadcastToAll(beginSoldDate, endSoldDate);
         }
 
         public async Task<object> GetUnimported()

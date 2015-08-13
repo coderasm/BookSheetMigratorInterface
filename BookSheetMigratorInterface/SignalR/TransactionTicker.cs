@@ -70,6 +70,31 @@ namespace BookSheetMigratorInterface.SignalR
             }
         }
 
+        public async Task migrateAndBroadcastToAll(DateTime beginSoldDate, DateTime endSoldDate)
+        {
+            if (!migratingNewTransactions && clientsConnected())
+            {
+                migratingNewTransactions = true;
+                var transactions = await migrateAndAttachCollections(beginSoldDate, endSoldDate);
+                broadcaster = new ToAllBroadcaster(Clients, transactions);
+                broadcaster.broadcast();
+                migratingNewTransactions = false;
+            }
+        }
+
+        private async Task<List<AWGTransactionDTO>> migrateAndAttachCollections(DateTime beginSoldDate, DateTime endSoldDate)
+        {
+            var transactions = await migrateAndReturnNewTransactions(beginSoldDate, endSoldDate);
+            var transactionDao = new TransactionDAO();
+            return await transactionDao.attachDealersAndContactsTo(transactions);
+        }
+
+        private async Task<List<AWGTransactionDTO>> migrateAndReturnNewTransactions(DateTime beginSoldDate, DateTime endSoldDate)
+        {
+            var migrator = new MultipleMigrator();
+            return await migrator.migrate(beginSoldDate, endSoldDate);
+        }
+
         private bool clientsConnected()
         {
             return UserHandler.ConnectedIds.Count > 0;

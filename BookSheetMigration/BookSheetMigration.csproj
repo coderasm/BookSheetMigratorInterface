@@ -66,6 +66,8 @@
     <Compile Include="AwgToHoldingTable\SellerDealerIdInserter.cs" />
     <None Include="App.config" />
     <None Include="Properties\SlowCheetah\SlowCheetah.Transforms.targets" />
+    <Compile Include="AwgToHoldingTable\TransactionIdsInserter.cs" />
+    <Compile Include="AwgToHoldingTable\BookSheetTransactionMigratorByDateRange.cs" />
     <Compile Include="HoldingTableToWebInterface\BuyerDealerCollectionInserter.cs" />
     <Compile Include="HoldingTableToWebInterface\SellerDealerCollectionInserter.cs" />
     <Compile Include="StringManipulation\ArticleConjunctionPrepositionRemover.cs" />
