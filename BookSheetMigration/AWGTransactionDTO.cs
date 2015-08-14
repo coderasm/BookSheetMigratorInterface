@@ -199,6 +199,9 @@ namespace BookSheetMigration
         [Column("FeeException")]
         public int feeException { get; set; }
 
+        [Column("Deleted")]
+        public DateTime? deleted { get; set; }
+
         public override bool Equals(object obj)
         {
             AWGTransactionDTO transactionDto = obj as AWGTransactionDTO;

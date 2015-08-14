@@ -1,5 +1,5 @@
 ﻿<div class="page-header">
-    <h1>BookSheet Transaction Migration Service</h1>
+    <h1>BookSheet Transaction Import Service</h1>
 </div>
 <div class=".container-fluid" data-bind="loadingWhen: isLoadingTransactions">
     <div class="row" style="display: none" data-bind="visible: hasTransactions">
@@ -119,8 +119,8 @@
                                                 <button data-bind="click: clearChanges, enable: isDirty">Clear Changes</button>
                                             </div>
                                             <div class="col-md-6 text-right">
-                                                <button data-bind="click: doDelete.bind(self, $parent.transactions)">Delete</button>
-                                                <button data-bind="click: hide">Hide</button>
+                                                <button data-bind="click: doDelete.bind(self, $parent.transactions)">Re-Migrate</button>
+                                                <button data-bind="click: hide.bind(self, $parent.transactions)">Delete</button>
                                             </div>
                                         </div>
                                         <div class="row">

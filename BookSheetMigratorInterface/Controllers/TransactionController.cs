@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
 using System.Web.Http;
 using BookSheetMigration;
@@ -25,6 +24,15 @@ namespace BookSheetMigratorInterface.Controllers
         {
             var transactionDao = new TransactionDAO();
             return await transactionDao.get(eventId, transactionId);
+        }
+
+        // DELETE: api/Transaction/eventId/transactionId
+        [Route("{eventId:int}/{transactionId:int}")]
+        public async Task<object> Delete(int eventId, int transactionId)
+        {
+            var transactionDao = new TransactionDAO();
+            var result = await transactionDao.delete(eventId, transactionId);
+            return new { success = (result != 0) };
         }
 
         // POST: api/Transaction/import
@@ -92,12 +100,12 @@ namespace BookSheetMigratorInterface.Controllers
             return new { success = (result != 0) };
         }
 
-        // DELETE: api/Transaction/eventId/transactionId
-        [Route("{eventId:int}/{transactionId:int}")]
-        public async Task<object> Delete(int eventId, int transactionId)
+        // PUT: api/Transaction/hide/eventId/transactionId
+        [Route("hide/{eventId:int}/{transactionId:int}")]
+        public async Task<object> Put(int eventId, int transactionId)
         {
             var transactionDao = new TransactionDAO();
-            var result = await transactionDao.delete(eventId, transactionId);
+            var result = await transactionDao.hide(eventId, transactionId);
             return new { success = (result != 0) };
         }
     }

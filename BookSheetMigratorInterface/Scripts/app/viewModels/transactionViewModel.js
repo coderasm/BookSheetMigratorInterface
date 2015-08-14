@@ -216,8 +216,25 @@
                    });
                }
 
-               self.hide = function() {
-                   
+               self.isHiding = false;
+
+               self.hide = function(transactions) {
+                   if (self.isHiding)
+                       return;
+                   self.isHiding = true;
+                   $.ajax({
+                       url: transactionUri + "hide/" + self.eventId + "/" + self.transactionId,
+                       type: "PUT",
+                       data: {},
+                       dataType: 'json',
+                       success: function (result) {
+                           self.isHiding = false;
+                           if (result.success)
+                               self.remove(transactions);
+                           else
+                               self.error("Unable to hide.");
+                       }
+                   });
                }
 
                function updateAllDirtyToNewValues() {

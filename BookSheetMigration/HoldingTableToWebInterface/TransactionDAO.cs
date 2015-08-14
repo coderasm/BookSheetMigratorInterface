@@ -86,7 +86,7 @@ namespace BookSheetMigration.HoldingTableToWebInterface
 
         public async Task<List<AWGTransactionDTO>> getUnimported(int eventId, int transactionId)
         {
-            var query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL AND EventId=" + eventId + " AND TransactionId=" + transactionId;
+            var query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL AND Deleted IS NULL AND EventId=" + eventId + " AND TransactionId=" + transactionId;
             return await entityDao.selectShared(query);
         }
 
@@ -98,7 +98,7 @@ namespace BookSheetMigration.HoldingTableToWebInterface
 
         public async Task<List<AWGTransactionDTO>> getUnimportedWithReferences()
         {
-            const string query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL";
+            const string query = "SELECT * FROM " + Settings.ABSBookSheetTransactionTable + " WHERE Imported IS NULL AND Deleted IS NULL";
             var transactions = await entityDao.@select(query);
             return await attachDealersAndContactsTo(transactions);
         }
@@ -184,6 +184,12 @@ namespace BookSheetMigration.HoldingTableToWebInterface
         {
             var transaction = new AWGTransactionDTO {transactionId = transactionId, eventId = eventId};
             return await entityDao.delete(transaction);
+        }
+
+        public async Task<int> hide(int eventId, int transactionId)
+        {
+            var transaction = new AWGTransactionDTO { transactionId = transactionId, eventId = eventId, deleted = DateTime.Now};
+            return await entityDao.update(transaction, new List<string>{"Deleted"});
         }
 
         public async Task<int> update(int eventId, int transactionId, JToken json)
