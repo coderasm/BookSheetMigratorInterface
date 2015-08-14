@@ -133,6 +133,17 @@
                     });
                 }
 
+                self.migratorBeginSoldDate = ko.observable(new Date());
+
+                self.migratorEndSoldDate = ko.observable(new Date());
+
+                self.doMigration = function() {
+                    ticker.server.migrateAndBroadcastToAll(self.migratorBeginSoldDate(), self.migratorEndSoldDate())
+                        .fail(function (jqXHR, textStatus, errorThrown) {
+                            self.error(errorThrown);
+                        });
+                }
+
                 var ticker = $.connection.transactionTicker; // the generated client-side hub proxy
 
                 function init() {

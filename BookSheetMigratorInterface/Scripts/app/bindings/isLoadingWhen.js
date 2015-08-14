@@ -43,14 +43,7 @@
                 //get a reference to the loader
                 $loader = $element.find("div#loadingDialog");
 
-            //if we are currently loading...
-            if (isLoading) {
-                //...and show the loader
-                $loader.modal('toggle');
-            } else {
-                //otherwise, fade out the loader
-                $loader.modal('toggle');
-            }
+            $loader.modal('toggle');
         }
     };
 });

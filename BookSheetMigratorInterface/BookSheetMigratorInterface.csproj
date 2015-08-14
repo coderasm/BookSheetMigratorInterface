@@ -431,6 +431,7 @@
     <Content Include="Views\Shared\_PageFilterSelectUpdateImport.cshtml" />
     <Content Include="Views\Shared\_Filter.cshtml" />
     <Content Include="Views\Shared\_SelectUpdateImport.cshtml" />
+    <Content Include="Views\Shared\_MigrateWindow.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

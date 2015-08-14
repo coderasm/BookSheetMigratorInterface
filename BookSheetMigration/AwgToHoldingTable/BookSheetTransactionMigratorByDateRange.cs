@@ -28,7 +28,7 @@ namespace BookSheetMigration.AwgToHoldingTable
 
         private List<AWGEventDTO> findEventsInDateRange()
         {
-            var query = "SELECT * FROM " + Settings.ABSBookSheetEventTable + " WHERE NOT (EndTime < '" + beginSoldDate.ToString(dateFormat) + "' OR StartTime > '" + endSoldDate.ToString(dateFormat);
+            var query = "SELECT * FROM " + Settings.ABSBookSheetEventTable + " WHERE NOT (EndTime < '" + beginSoldDate.ToString(dateFormat) + "' OR StartTime > '" + endSoldDate.ToString(dateFormat) + "')";
             return eventDao.@select(query).Result;
         }
 
