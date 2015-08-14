@@ -92,11 +92,13 @@ namespace BookSheetMigratorInterface.Controllers
             return new { success = (result != 0) };
         }
 
-        // DELETE: api/Transaction/5
-        [Route("")]
-        public object Delete(int id)
+        // DELETE: api/Transaction/eventId/transactionId
+        [Route("{eventId:int}/{transactionId:int}")]
+        public async Task<object> Delete(int eventId, int transactionId)
         {
-            return new {message = "Not implemented"};
+            var transactionDao = new TransactionDAO();
+            var result = await transactionDao.delete(eventId, transactionId);
+            return new { success = (result != 0) };
         }
     }
 }

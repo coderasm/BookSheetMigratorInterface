@@ -102,6 +102,19 @@ namespace BookSheetMigration
             return await database.InsertAsync(entity);
         }
 
+        public async Task<int> delete(T entity)
+        {
+            using (var databaseConnection = createConnection())
+            {
+                return await databaseConnection.DeleteAsync(entity);
+            }
+        }
+
+        public async Task<int> deleteShared(T entity)
+        {
+            return await database.DeleteAsync(entity);
+        }
+
         public async Task<List<T>> mergeInsertOnly(List<T> pocos, int batchSize = 25)
         {
             using (var databaseConnection = createConnection())

@@ -113,10 +113,14 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-12">
+                                            <div class="col-md-6">
                                                 <button data-bind="click: importAndRemove.bind(self, $parent.transactions), enable: isNotImporting">Import</button>
                                                 <button type="submit">Update</button>
                                                 <button data-bind="click: clearChanges, enable: isDirty">Clear Changes</button>
+                                            </div>
+                                            <div class="col-md-6 text-right">
+                                                <button data-bind="click: doDelete.bind(self, $parent.transactions)">Delete</button>
+                                                <button data-bind="click: hide">Hide</button>
                                             </div>
                                         </div>
                                         <div class="row">

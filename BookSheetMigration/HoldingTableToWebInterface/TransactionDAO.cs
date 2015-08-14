@@ -59,7 +59,7 @@ namespace BookSheetMigration.HoldingTableToWebInterface
                     if (!await didImport(eventId, transactionId))
                         return new { success = false, message = "Already imported." };
                     scope.Complete();
-                    return new { success = true, message = "Imported Successfully. I will disappear in 1 minute." };
+                    return new { success = true, message = "Imported Successfully. I will disappear in 5 seconds." };
                 }
             }
             catch (SqlException exception)
@@ -110,6 +110,8 @@ namespace BookSheetMigration.HoldingTableToWebInterface
             await nonEntityDao.executeScalarShared(sql);
             await markTransactionAsImported(transaction);
         }
+
+
 
         private Sql buildAndReturnImportQuery(AWGTransactionDTO transaction)
         {
@@ -176,6 +178,12 @@ namespace BookSheetMigration.HoldingTableToWebInterface
                     message = "Update Failed. See I.T."
                 }
             };
+        }
+
+        public async Task<int> delete(int eventId, int transactionId)
+        {
+            var transaction = new AWGTransactionDTO {transactionId = transactionId, eventId = eventId};
+            return await entityDao.delete(transaction);
         }
 
         public async Task<int> update(int eventId, int transactionId, JToken json)

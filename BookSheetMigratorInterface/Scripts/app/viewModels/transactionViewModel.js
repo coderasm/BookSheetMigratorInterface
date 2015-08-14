@@ -177,18 +177,47 @@
                    if (result.success) {
                        self.isImported = true;
                        self.success(result.message);
-                       self.remove(transactions);
+                       self.removeAfterTime(transactions, 5000);
                    } else
                        self.error(result.message);
                }
 
-               self.remove = function (transactions) {
+               self.remove = function(transactions) {
+                   var remainingTransactions = ko.utils.arrayFilter(transactions(), function (transaction) {
+                       return transaction !== self;
+                   });
+                   transactions(remainingTransactions);
+               }
+
+               self.removeAfterTime = function (transactions, time) {
                    setTimeout(function() {
-                       var remainingTransactions = ko.utils.arrayFilter(transactions(), function (transaction) {
-                           return transaction !== self;
-                       });
-                       transactions(remainingTransactions);
-                   }, 60000);
+                       self.remove(transactions);
+                   }, time);
+               }
+
+               self.isDeleting = false;
+
+               self.doDelete = function (transactions) {
+                   if (self.isDeleting)
+                       return;
+                   self.isDeleting = true;
+                   $.ajax({
+                       url: transactionUri + self.eventId + "/" + self.transactionId,
+                       type: "DELETE",
+                       data: {},
+                       dataType: 'json',
+                       success: function (result) {
+                           self.isDeleting = false;
+                           if (result.success)
+                               self.remove(transactions);
+                           else
+                               self.error("Unable to delete.");
+                       }
+                   });
+               }
+
+               self.hide = function() {
+                   
                }
 
                function updateAllDirtyToNewValues() {
