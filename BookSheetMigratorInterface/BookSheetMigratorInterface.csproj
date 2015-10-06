@@ -43,7 +43,7 @@
   <ItemGroup>
     <Reference Include="AsyncPoco, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\AsyncPoco.1.1.2\lib\net45\AsyncPoco.dll</HintPath>
+      <HintPath>..\BookSheetMigration\libs\AsyncPoco.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
@@ -266,6 +266,7 @@
     <Content Include="Scripts-Build\domReady.js" />
     <Content Include="Config\appSettings.config">
       <TransformOnBuild>true</TransformOnBuild>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="Config\appSettings.BookSheetDebug.config">
       <DependentUpon>appSettings.config</DependentUpon>
@@ -281,6 +282,7 @@
     </None>
     <Content Include="Config\connectionStrings.config">
       <TransformOnBuild>true</TransformOnBuild>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="Config\connectionStrings.BookSheetDebug.config">
       <DependentUpon>connectionStrings.config</DependentUpon>

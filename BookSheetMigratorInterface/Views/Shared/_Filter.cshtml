@@ -3,7 +3,7 @@
         <span>Filter: </span><input data-bind="value: filter, valueUpdate: 'afterkeydown'" />
     </div>
     <div class="col-md-6">
-        <button class="btn btn-primary" data-bind="visible: hasNew, click: toggleShowOnlyNew" type="button">
+        <button class="btn btn-primary" style="display:none" data-bind="visible: hasNew, click: toggleShowOnlyNew" type="button">
             <span data-bind="text: filterTypeText">New</span> <span class="badge" data-bind="text: filterTypeCount"></span>
         </button>
     </div>

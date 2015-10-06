@@ -2,10 +2,10 @@
     <h1>BookSheet Transaction Import Service</h1>
 </div>
 <div class=".container-fluid" data-bind="loadingWhen: isLoadingTransactions">
-    <div class="row" style="display: none" data-bind="visible: hasTransactions">
+    <div class="row">
         <div class="col-md-12">
             @{ Html.RenderPartial("_PageFilterSelectUpdateImport");}
-            <div class="row">
+            <div class="row" style="display:none" data-bind="visible: hasTransactions">
                 <div class="col-md-12" data-bind="foreach: {data: page, afterAdd: fadeIn}">
                     <div class="row">
                         <div class="col-md-12">

@@ -1,4 +1,4 @@
-﻿using System;
+﻿using BookSheetMigration.AwgToHoldingTable;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BookSheetMigration.Test
@@ -9,7 +9,7 @@ namespace BookSheetMigration.Test
         [TestMethod]
         public void testTransactionMigration()
         {
-            DataMigrator<AWGTransactionDTO> transactionMigrator = new BookSheetTransactionMigrator();
+            DataMigrator<AWGTransactionDTO> transactionMigrator = new BookSheetTransactionMigrator(new TransactionIdsInserter());
             transactionMigrator.migrate();
         }
     }

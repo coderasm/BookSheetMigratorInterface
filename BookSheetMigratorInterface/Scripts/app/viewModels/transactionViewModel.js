@@ -5,12 +5,13 @@
        function (ko) {
            return function Transaction(data, transactionUri) {
                var self = this;
+               self.minimunBidAmount = 500;
                self.eventId = data.eventId;
                self.transactionId = data.transactionId;
                self.bidAmount = ko.observable(data.bidAmount).extend({
                    trackChange: true,
                    required: true,
-                   min: 1000
+                   min: self.minimunBidAmount
                });
                self.feeException = ko.observable(data.feeException).extend({ trackChange: true });
                self.soldDate = ko.observable(data.soldDate).extend({ trackChange: true });
@@ -93,11 +94,11 @@
 
                self.importable = ko.computed(function () {
                    return self.sellerDealerId() != null && self.buyerDealerId() != null && self.buyerContactId() != null
-                       && self.bidAmount() >= 1000 && self.transportFee() >= 0;
+                       && self.bidAmount() >= self.minimunBidAmount && self.transportFee() >= 0;
                });
 
                self.updateable = ko.computed(function() {
-                   return self.bidAmount() >= 1000 && self.transportFee() >= 0;
+                   return self.bidAmount() >= self.minimunBidAmount && self.transportFee() >= 0;
                });
 
                self.update = function (formElement) {
